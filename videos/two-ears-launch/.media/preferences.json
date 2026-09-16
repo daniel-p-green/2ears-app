@@ -42,6 +42,13 @@
         "two-ears-launch"
       ],
       "updated_at": "2026-09-16T18:50:06.116Z"
+    },
+    "voice": {
+      "value": "bm_george",
+      "confirmed_in": [
+        "two-ears-launch"
+      ],
+      "updated_at": "2026-09-16T21:18:28.964Z"
     }
   },
   "sightings": {}

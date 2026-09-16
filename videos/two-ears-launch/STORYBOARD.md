@@ -20,7 +20,7 @@ music: none
 
 - scene: Bold white type on black; the last word of one line swaps in place, listening → talking → broadcasting
 - voiceover: "Some rooms are for listening. Then somehow you're talking. Then you're broadcasting."
-- duration: 5.013s
+- duration: 5.035s
 - transition_in: cut
 - status: animated
 - src: compositions/frames/01-some-rooms.html
@@ -44,7 +44,7 @@ Scene 3 (3.6–6.0s): as the VO says "broadcasting", the slot hard-cuts to "broa
 
 - scene: A watch on a wrist in profile on black; a single soft haptic ring expands once from the watch and fades; type lands: "One private tap." then "Nobody else feels it."
 - voiceover: "two.ears taps your wrist the moment you've talked past the point of listening. Nobody else feels it."
-- duration: 6.016s
+- duration: 6.4s
 - transition_in: zoom-through
 - status: animated
 - src: compositions/frames/02-one-private-tap.html
@@ -69,7 +69,7 @@ Scene 3 (4.6–7.0s): as the VO says "Nobody else feels it", the watch shrinks a
 
 - scene: The live ring rebuilt full-size: it fills from a low share, crosses the 40% tick, turns orange, the tap pulse lands; then the ring drains back under the line and the orange fades to cyan
 - voiceover: "It measures your share of the last two minutes, from loudness alone, on the watch. Cross your line, one tap. Keep going, one more. Back under, silence."
-- duration: 9.643s
+- duration: 9.429s
 - transition_in: crossfade
 - status: animated
 - src: compositions/frames/03-the-ring.html
@@ -95,7 +95,7 @@ Scene 4 (6.6–9.0s): as the VO says "Back under, silence", the fill drains 58�
 
 - scene: Three short statements land one at a time on black, each alone: "Loudness, not words." "Nothing recorded." "Nothing leaves your wrist."
 - voiceover: "It listens to how loud the room is, not what anyone says. Nothing is recorded. Nothing leaves your wrist."
-- duration: 6.891s
+- duration: 6.763s
 - transition_in: crossfade
 - status: animated
 - src: compositions/frames/04-not-words.html
@@ -119,7 +119,7 @@ Scene 3 (4.0–6.0s): as the VO says "Nothing leaves your wrist", the line hard-
 
 - scene: Three list rows assemble in a staggered cascade inside a drawn watch outline: Listen, tap past 40%; Balanced, tap past 55%; Presenting, stats only
 - voiceover: "Pick the room. Listen, Balanced, or Presenting."
-- duration: 3.029s
+- duration: 3.307s
 - transition_in: push-slide LEFT
 - status: animated
 - src: compositions/frames/05-pick-the-room.html
@@ -143,7 +143,7 @@ Scene 3 (4.0–5.0s): the assembled list holds; the Listen row's circle glows on
 
 - scene: A circular gauge with a red-to-green arc counts up to 82 with "Good" beneath it and "Listening Score" under that; two small rows arrive: "Longest stretch 48s" and "Course-corrected 2 of 2"
 - voiceover: "Afterwards, a Listening Score, like a sleep score, and whether you course-corrected."
-- duration: 4.907s
+- duration: 4.885s
 - transition_in: crossfade
 - status: animated
 - src: compositions/frames/06-listening-score.html
@@ -168,7 +168,7 @@ Scene 3 (4.2–6.0s): as the VO says "whether you course-corrected", two rows as
 
 - scene: The stage clears; the icon's two ears draw on at center on the deep blue glow, the wordmark "two.ears" completes beneath, then the tagline: "Two ears, one mouth. Use them in that ratio." and a final line "Coming to Apple Watch"
 - voiceover: "two.ears. Two ears, one mouth. Use them in that ratio."
-- duration: 3.84s
+- duration: 4.075s
 - transition_in: zoom-through
 - status: animated
 - src: compositions/frames/07-two-ears.html

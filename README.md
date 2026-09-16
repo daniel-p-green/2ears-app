@@ -50,18 +50,20 @@ the watchOS 27 simulator on the Activity Analog face. Note that `xcrun simctl op
 exercise this path on watchOS; add the complication to a face and tap it.
 
 **Launch video.** `videos/two-ears-launch/` is a HyperFrames project: `BRIEF.md`, `STORYBOARD.md`,
-`SCRIPT.md`, seven frame compositions, staged fonts, and local Kokoro narration. Render with
-`npx hyperframes render --quality high --output renders/video.mp4` from that folder (renders are
-gitignored). The delivered cut is 39 seconds, 1080x1080, narrated and captioned, with no music
-because no music provider was signed in; `npx hyperframes auth login` and a re-run of the audio
-step add a HeyGen bed and voice.
+seven frame compositions, and staged fonts. The delivered cut is silent by design (`music: none`,
+no `SCRIPT.md`): the local Kokoro narration was tried and cut for sounding synthetic, and the
+on-screen kinetic type in each frame already carries the story on a muted feed. Render with
+`npx hyperframes render --quality delivery --resolution square-4k --output renders/video.mp4`
+from that folder (renders are gitignored); the delivered cut is 2160x2160, 39.9 seconds. A real
+voice and a music bed are still available by signing in with `npx hyperframes auth login`,
+restoring `SCRIPT.md` from git history, and re-running the audio step.
 
 The extended-runtime session type is `mindfulness` in `Watch/TwoEarsWatch-Info.plist`: it is
 the only frontmost type with a one-hour limit (self-care is ten minutes). The app renews the
 session when it expires or when you return after leaving the app, so longer conversations
 keep going as long as you come back to the app; the session clock is pipeline time, so time
 away or on a call never reads as silence. Whether App Review accepts `mindfulness` for a
-listening coach is still the open question from the spec. There is no complication yet.
+listening coach is still the open question from the spec.
 
 First things to test on a physical watch: that the microphone keeps delivering with the wrist
 down for the whole runtime window, and that haptics fire with the screen off.
