@@ -31,25 +31,28 @@ The harness is a lab tool, not the product. It stores audio on disk so results c
       AttributionClassifier.swift  user / room / uncertain from loudness bands
       TalkShareEstimator.swift  trailing 120 s share with minimum-evidence gate
       Pipeline.swift            runs samples through the stages, yields WindowStat
-    TwoEarsLab/                 executable `twoears-lab`
-      Lab.swift                 ArgumentParser root command
-      Record.swift              capture, prompts, session writer
-      Analyze.swift             scoring, sweep, per-session JSON
-      Report.swift              aggregate report.md with verdict
+    TwoEarsLabKit/              library with all lab logic, testable without a process spawn
       AudioCapture.swift        AVAudioEngine input, converts to 16 kHz mono Float32
       TurnScript.swift          script model and default script
       SessionFiles.swift        paths and JSON codecs
       Scorer.swift              label alignment and metrics
+      Analyzer.swift            runs Pipeline over a WAV, scores, sweeps
+      Reporter.swift            aggregates analyses into report.md
+    TwoEarsLab/                 thin executable `twoears-lab`
+      Lab.swift                 ArgumentParser root command
+      RecordCommand.swift       prompts and session writing on top of AudioCapture
+      AnalyzeCommand.swift      argument parsing, calls Analyzer
+      ReportCommand.swift       argument parsing, calls Reporter
   Tests/
     TwoEarsCoreTests/           synthetic-signal tests per stage
-    TwoEarsLabTests/            scorer and end-to-end fixture tests
+    TwoEarsLabKitTests/         scorer and end-to-end fixture tests
   Scripts/
     default.json                the standard turn script
   docs/superpowers/specs/       this document
   README.md
 ```
 
-Dependencies: `swift-argument-parser` only. AVFoundation is used from `TwoEarsLab` for capture and WAV I/O.
+Dependencies: `swift-argument-parser` only. AVFoundation is used from `TwoEarsLabKit` for capture and WAV I/O. `TwoEarsLab` contains no logic beyond argument parsing so every behavior is covered by library tests.
 
 ## Classifier library (TwoEarsCore)
 
@@ -73,14 +76,14 @@ All constants live in `ClassifierConfig` with these defaults from the spec:
 Stage behavior:
 
 1. **LevelMeter** computes RMS over the window and converts to dBFS. Silence (all zeros) maps to a floor of -120 dBFS rather than negative infinity.
-2. **NoiseFloorTracker** keeps a ring buffer of the last 100 window levels and reports the 10th percentile. Before the buffer has 20 windows it reports the minimum seen so far.
+2. **NoiseFloorTracker** keeps a ring buffer of the last 100 window levels and reports the 10th percentile using the nearest-rank method: sort ascending and take the element at index `floor(0.10 * count)`. No interpolation. Before the buffer has 20 windows it reports the minimum seen so far.
 3. **VadClassifier** marks a window voiced when level exceeds floor plus vadMarginDb and the window's zero-crossing rate lies within [zcrMin, zcrMax]. It then applies burst rejection: a run of voiced windows shorter than minBurstMs is relabeled unvoiced. Burst rejection introduces a lag of minBurstMs because a run cannot be confirmed until it reaches that length; the pipeline emits windows with that delay and the scorer accounts for it by aligning on window index, not arrival time.
 4. **AttributionClassifier** assigns each voiced window: `user` if level is at or above floor plus userBandDb plus uncertainMarginDb; `uncertain` if within plus or minus uncertainMarginDb of floor plus userBandDb; otherwise `room`. Unvoiced windows carry no attribution.
 5. **TalkShareEstimator** holds the trailing 1200 windows and returns either a share value (user voiced seconds over total voiced seconds) or `.uncertain` when total voiced time is under minVoicedSec or the uncertain fraction exceeds maxUncertainFraction.
 
 `WindowStat` fields: `index`, `startMs`, `levelDb`, `noiseFloorDb`, `zcr`, `voiced`, `attribution` (user, room, uncertain, or nil when unvoiced).
 
-`Pipeline` is a stateful object that accepts sample chunks of any length, buffers to whole windows, and returns the `WindowStat` values completed by that chunk. It is the only entry point the watch app will need.
+`Pipeline` is a stateful object that accepts sample chunks of any length, buffers to whole windows, and returns the `WindowStat` values completed by that chunk. Because burst rejection holds up to eight windows until a voiced run is confirmed, `Pipeline` also has a `finish()` method that resolves any pending run as unvoiced, emits the held windows, and discards any partial window. Callers must call it at end of stream or on Ctrl-C so no windows go unscored. `Pipeline` exposes `currentShare`, the `TalkShareEstimator` output as of the last emitted window, so both the analyzer and the future watch app read share from the same place. `Pipeline` is the only entry point the watch app will need.
 
 ## Record command
 
@@ -141,7 +144,7 @@ Total default duration: 190 seconds.
 ## Analyze command
 
 ```
-twoears-lab analyze <session-dir> [--config overrides.json] [--sweep]
+twoears-lab analyze <session-dir> [--config overrides.json] [--sweep] [--dump-windows windows.csv]
 ```
 
 Reads `audio.wav` and `labels.json`, runs `Pipeline`, and scores. Writes `analysis.json` beside the inputs and prints a summary.
@@ -152,13 +155,13 @@ Scoring rules:
 - Windows in `both` blocks are excluded from attribution accuracy and VAD metrics. They are reported separately as the fraction that came out `uncertain`, which is the behavior the product spec asks for when two people talk at once.
 - **Attribution accuracy** is computed over windows whose truth is `you` or `partner` and whose prediction is voiced. A prediction of `user` is correct for `you`, `room` is correct for `partner`. Predictions of `uncertain` count as incorrect for accuracy and are also reported as the uncertain fraction. This is the number compared against the 85% gate.
 - **VAD recall** is the fraction of `you` and `partner` windows predicted voiced. **VAD precision** is the fraction of voiced predictions whose truth is not `silence`. Scripted talkers pause naturally within a block, so recall is reported as informational, not gated.
-- **Talk-share error** compares the estimator's trailing-window output at the end of every block against the true share computed from labels over the same trailing window, and reports mean absolute error in percentage points plus the fraction of time the estimator returned uncertain.
+- **Talk-share error** compares `currentShare` at the end of every block against the true share computed from labels over the same trailing 120 s window. True share counts `you` seconds as user, `partner` seconds as room, `both` seconds as one second of user and one second of room each, and ignores `silence`. Evaluation points where the estimator returns uncertain are dropped from the error and counted only in the uncertain fraction. The metric reports mean absolute error in percentage points over the remaining points plus the fraction of evaluation points that were uncertain.
 - The confusion matrix has truth rows `you`, `partner`, `silence` and prediction columns `user`, `room`, `uncertain`, `unvoiced`.
-- **Worst blocks**: the three blocks with the lowest per-block accuracy, with their label, time range, mean level, and mean noise floor. These feed the failure-mode write-up for cafe sessions.
+- **Worst blocks**: among `you` and `partner` blocks only, the three with the lowest per-block attribution accuracy, with their label, time range, mean level, and mean noise floor. `silence` and `both` blocks have no attribution accuracy and are not ranked. These feed the failure-mode write-up for cafe sessions.
 
 `--sweep` reruns scoring over a grid of vadMarginDb in {6, 8, 10, 12} and userBandDb in {10, 12, 14, 16, 18, 20} and prints a table of attribution accuracy and uncertain fraction per cell. The sweep informs the "fixed threshold vs calibration" unresolved decision; it does not change the gated number, which always uses defaults.
 
-`analysis.json` contains the config used, every metric above, the confusion matrix, per-block results, and the sweep table when requested. It does not contain audio samples or per-window levels; per-window data can be dumped with `--dump-windows windows.csv` for plotting.
+`analysis.json` contains the config used, a `usesDefaultConfig` boolean, every metric above, the confusion matrix, per-block results, and the sweep table when requested. It does not contain audio samples or per-window levels; per-window data can be dumped with `--dump-windows windows.csv` for plotting.
 
 ## Report command
 
@@ -168,7 +171,7 @@ twoears-lab report [sessions/] [--out report.md]
 
 Loads every `analysis.json` under the directory, groups by condition, and writes `report.md` with:
 
-- A verdict line: GO if the mean attribution accuracy across quiet sessions is at or above 85% with default config and at least three quiet sessions exist; otherwise NO-GO or INSUFFICIENT DATA.
+- A verdict line: GO if the mean attribution accuracy across quiet sessions analyzed with the default config is at or above 85% and at least three such sessions exist; otherwise NO-GO or INSUFFICIENT DATA. Sessions whose `analysis.json` has `usesDefaultConfig` false are listed in the tables with a "custom config" marker and excluded from the verdict.
 - A table per condition: session, device, accuracy, uncertain fraction, VAD precision, VAD recall, share error.
 - A failure-modes section listing the worst blocks from cafe and other sessions with their level and floor numbers, ready to be rewritten into prose.
 
@@ -177,7 +180,7 @@ Loads every `analysis.json` under the directory, groups by condition, and writes
 - Unknown device name: list available devices and exit with status 2.
 - Input format that cannot be converted to 16 kHz mono: exit with the format description.
 - Session directory missing either file, or a WAV whose sample rate disagrees with `labels.json`: exit with the mismatch.
-- Ctrl-C during record: stop the engine, flush the WAV, write labels with `endedEarlyAtMs` set, exit 0.
+- Ctrl-C during record: stop the engine, flush the WAV, write labels with `endedEarlyAtMs` set, exit 0. Scoring later treats windows after `endedEarlyAtMs` as absent.
 - Mic permission denied: print the macOS Privacy settings path and exit with status 3.
 
 ## Testing
@@ -191,12 +194,12 @@ TwoEarsCore:
 - VadClassifier: a window at floor plus 7.9 dB is unvoiced; at 8.1 dB with in-band ZCR is voiced; white noise at high level with out-of-band ZCR is unvoiced; a 700 ms voiced run is rejected, an 800 ms run is kept.
 - AttributionClassifier: levels at floor plus 12, 16, and 20 dB map to room, uncertain, user; the 3 dB margin edges are checked on both sides.
 - TalkShareEstimator: 14 seconds voiced returns uncertain, 16 returns a value; a 31% uncertain mix returns uncertain; a 60 s user and 60 s room feed returns 0.5.
-- Pipeline: chunks of 37 samples produce the same WindowStat sequence as chunks of 4096.
+- Pipeline: chunks of 37 samples produce the same WindowStat sequence as chunks of 4096, compared after `finish()`; a stream ending mid-run emits the held windows on `finish()`; `currentShare` matches a standalone estimator fed the same windows.
 
 TwoEarsLab:
 
 - Scorer: hand-built WindowStat arrays against a small labels set produce the expected confusion matrix, margin exclusion, and both-block handling.
-- Fixture: the test synthesizes a WAV following the default script with a loud modulated tone for `you` blocks, a quiet one for `partner`, and low noise for `silence`, runs `analyze`, and asserts accuracy above 95% and a share error under 5 points. This proves the tool end to end before any real recording.
+- Fixture: the test synthesizes a WAV following the default script with a loud tone for `you` blocks, a quiet one for `partner`, and low noise for `silence`, runs the analyzer through `TwoEarsLabKit`, and asserts accuracy above 95% and a share error under 5 points. The tone pattern is chosen so the classifier's own rules hold: within every 10 windows of a speech block, exactly one window drops to the noise level so the 10th-percentile floor stays at the noise level rather than climbing to the tone, while the nine voiced windows between dips form runs of 900 ms, above the 800 ms burst minimum. The tone frequency sits inside the ZCR band. This proves the tool end to end before any real recording.
 - TurnScript: block timeline sums to the declared durations and rejects unknown labels.
 
 ## Acceptance for M0 as a deliverable
