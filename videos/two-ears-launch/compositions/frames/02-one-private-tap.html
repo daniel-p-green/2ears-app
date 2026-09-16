@@ -2,10 +2,9 @@
   <!--
     02-one-private-tap — kinetic-type-beats (Hook triptych variant, adapted):
     beat 1 wordmark → beat 2 the tap pulse (non-text) → beat 3 closing line, which holds.
-    Typography note for the orchestrator: no font files are staged in this project
-    (no assets/fonts, no capture/assets/fonts, zero .woff2 on disk), so per the role no
-    named family is declared; frame.md weights / tracking / colors are applied on a generic
-    sans stack. Swap in a shipped @font-face when fonts are staged.
+    Revision: the drawn watch is now hero-scale — case height 918px (85% of the 1080px
+    canvas), with the straps extending past the frame's top/bottom edges so their tips clip
+    (group height 1326px vs. 1080px canvas, centered — clipped ~123px each side).
   -->
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
   <style>
@@ -34,19 +33,21 @@
       align-items: center;
       justify-content: center;
     }
-    /* The watch group: 300 × 520, case centered in the box so the group scales about the face. */
+    /* Hero watch group: 765 × 1326. Case (the dial) is 918px tall = 85% of the 1080
+       canvas and sits fully on-frame; the straps run past the group's own bounds so
+       their tips clip the frame's top/bottom edges once centered. */
     #root [data-part="watch"] {
       position: relative;
-      width: 300px;
-      height: 520px;
+      width: 765px;
+      height: 1326px;
     }
     #root [data-part="glow"] {
       position: absolute;
       left: 50%;
       top: 50%;
-      width: 1000px;
-      height: 1000px;
-      margin: -500px 0 0 -500px;
+      width: 1300px;
+      height: 1300px;
+      margin: -650px 0 0 -650px;
       border-radius: 50%;
       background: radial-gradient(
         circle,
@@ -58,34 +59,34 @@
     #root [data-part="band-top"],
     #root [data-part="band-bottom"] {
       position: absolute;
-      left: 75px;
-      width: 150px;
-      height: 88px;
+      left: 191px;
+      width: 383px;
+      height: 224px;
       border: 1.5px solid rgba(100, 210, 255, 0.2);
       background: rgba(255, 255, 255, 0.03);
     }
     #root [data-part="band-top"] {
       top: 0;
-      border-radius: 30px 30px 8px 8px;
+      border-radius: 76px 76px 20px 20px;
     }
     #root [data-part="band-bottom"] {
-      top: 432px;
-      border-radius: 8px 8px 30px 30px;
+      top: 1102px;
+      border-radius: 20px 20px 76px 76px;
     }
     #root [data-part="case"] {
       position: absolute;
       left: 0;
-      top: 80px;
-      width: 300px;
-      height: 360px;
-      border-radius: 76px;
+      top: 204px;
+      width: 765px;
+      height: 918px;
+      border-radius: 194px;
       border: 2px solid rgba(100, 210, 255, 0.2);
       background: #000000;
     }
     #root [data-part="face"] {
       position: absolute;
-      inset: 14px;
-      border-radius: 62px;
+      inset: 36px;
+      border-radius: 158px;
       background: #000000;
       overflow: hidden;
     }
@@ -101,11 +102,11 @@
     }
     #root [data-part="crown"] {
       position: absolute;
-      right: -9px;
-      top: 238px;
-      width: 10px;
-      height: 44px;
-      border-radius: 5px;
+      right: -23px;
+      top: 607px;
+      width: 26px;
+      height: 112px;
+      border-radius: 13px;
       border: 1.5px solid rgba(100, 210, 255, 0.2);
       background: rgba(100, 210, 255, 0.15);
     }
@@ -113,10 +114,10 @@
       position: absolute;
       left: 50%;
       top: 50%;
-      width: 92px;
-      height: 92px;
-      margin: -90px 0 0 -46px;
-      border-radius: 24px;
+      width: 235px;
+      height: 235px;
+      margin: -230px 0 0 -117px;
+      border-radius: 56px;
       object-fit: cover;
       display: block;
     }
@@ -125,13 +126,13 @@
       position: absolute;
       left: 50%;
       top: 50%;
-      width: 120px;
-      height: 120px;
-      margin: -60px 0 0 -60px;
+      width: 306px;
+      height: 306px;
+      margin: -153px 0 0 -153px;
       border-radius: 50%;
       border: 1.5px solid #64d2ff;
     }
-    /* Wordmark: hero at h1 scale, later scaled down by GSAP into the face lockup. */
+    /* Wordmark: hero at h1 scale, later scaled down by GSAP into a small lockup. */
     #root [data-part="wm"] {
       position: absolute;
       left: 0;
@@ -236,7 +237,7 @@
 
       var tl = gsap.timeline({ paused: true });
 
-      // ── Scene 1 (0.0–1.4s): the wordmark arrives per-token, then scales down into the face lockup.
+      // ── Scene 1 (0.0–1.4s): the wordmark arrives per-token, then scales down into a small lockup.
       var wmStarts = sequence(wmTokens, 0.06);
       wmTokens.forEach(function (el, i) {
         tl.fromTo(
@@ -249,7 +250,7 @@
       // Plain scale tween, no camera, no overshoot: the hero clears the center by becoming the small lockup.
       tl.to(wm, { scale: 0.26, y: 64, duration: 0.55, ease: "power2.inOut" }, 1.0);
 
-      // ── Scene 2 (1.4–4.6s): watch fades in at center; glow rises behind it; ONE ring pulse; face brightens then settles.
+      // ── Scene 2 (1.4–4.6s): watch fades in at hero scale; glow rises behind it; ONE ring pulse; face brightens then settles.
       tl.fromTo(glow, { opacity: 0 }, { opacity: 0.28, duration: 0.9, ease: "power2.out" }, 1.45);
       tl.fromTo(parts, { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power2.out" }, 1.45);
 
@@ -264,7 +265,7 @@
       tl.to(faceLit, { opacity: 0.22, duration: 0.8, ease: "power2.inOut" }, 2.3);
 
       // ── Scene 3 (4.6s–end): the watch shrinks and slides up to the upper third; the closing line arrives beneath.
-      tl.to(watch, { scale: 0.55, y: -240, duration: 0.75, ease: "power2.inOut" }, 4.55);
+      tl.to(watch, { scale: 0.22, y: -254, duration: 0.75, ease: "power2.inOut" }, 4.55);
 
       var lineStarts = sequence(lineTokens, 4.75);
       lineTokens.forEach(function (el, i) {

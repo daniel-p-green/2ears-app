@@ -74,7 +74,7 @@
 
     [id="05-pick-the-room-headline"] {
       position: absolute;
-      top: 68px;
+      top: 28px;
       left: 0;
       width: 100%;
       text-align: center;
@@ -87,81 +87,82 @@
       will-change: transform, opacity;
     }
 
-    /* ── drawn watch ── */
+    /* ── drawn watch — hero scale: case 688×794 (case height ≈ 73.5% of 1080;
+       total watch bounding incl. straps ≈ 950px ≈ 88% of the 1080px canvas) ── */
     [class~="05-pick-the-room-strap"] {
       position: absolute;
-      left: 420px;
-      width: 240px;
-      height: 80px;
-      border: 3px solid rgba(100, 210, 255, 0.55);
+      left: 381px;
+      width: 318px;
+      height: 106px;
+      border: 4px solid rgba(100, 210, 255, 0.55);
       background: #000000;
       z-index: 1;
     }
     [id="05-pick-the-room-strap-top"] {
-      top: 148px;
-      border-radius: 26px 26px 0 0;
+      top: 105px;
+      border-radius: 34px 34px 0 0;
       border-bottom: none;
     }
     [id="05-pick-the-room-strap-bottom"] {
-      top: 786px;
-      border-radius: 0 0 26px 26px;
+      top: 949px;
+      border-radius: 0 0 34px 34px;
       border-top: none;
     }
     [id="05-pick-the-room-case"] {
       position: absolute;
-      left: 280px;
-      top: 210px;
-      width: 520px;
-      height: 600px;
-      border-radius: 140px;
-      border: 3px solid rgba(100, 210, 255, 0.85);
+      left: 196px;
+      top: 187px;
+      width: 688px;
+      height: 794px;
+      border-radius: 185px;
+      border: 4px solid rgba(100, 210, 255, 0.85);
       background: #000000;
       z-index: 2;
       box-sizing: border-box;
     }
     [id="05-pick-the-room-crown"] {
       position: absolute;
-      left: 803px;
-      top: 372px;
-      width: 16px;
-      height: 66px;
-      border-radius: 8px;
-      border: 3px solid rgba(100, 210, 255, 0.85);
+      left: 888px;
+      top: 401px;
+      width: 21px;
+      height: 87px;
+      border-radius: 11px;
+      border: 4px solid rgba(100, 210, 255, 0.85);
       background: #000000;
       z-index: 1;
       box-sizing: border-box;
     }
     [id="05-pick-the-room-button"] {
       position: absolute;
-      left: 803px;
-      top: 462px;
-      width: 12px;
-      height: 100px;
-      border-radius: 6px;
-      border: 3px solid rgba(100, 210, 255, 0.55);
+      left: 888px;
+      top: 520px;
+      width: 16px;
+      height: 132px;
+      border-radius: 8px;
+      border: 4px solid rgba(100, 210, 255, 0.55);
       background: #000000;
       z-index: 1;
       box-sizing: border-box;
     }
     [id="05-pick-the-room-face"] {
       position: absolute;
-      left: 24px;
-      top: 24px;
-      width: 466px;
-      height: 546px;
-      border-radius: 116px;
+      left: 32px;
+      top: 32px;
+      width: 617px;
+      height: 722px;
+      border-radius: 154px;
       background: rgba(255, 255, 255, 0.04);
-      border: 1.5px solid rgba(100, 210, 255, 0.2);
+      border: 2px solid rgba(100, 210, 255, 0.2);
       box-sizing: border-box;
       overflow: hidden;
     }
     [id="05-pick-the-room-wordmark"] {
       position: absolute;
-      left: 32px;
-      top: 22px;
+      left: 42px;
+      top: 29px;
       font-family: "Space Grotesk", sans-serif;
       font-weight: 500;
-      font-size: 30px;
+      font-size: 40px;
       line-height: 1.2;
       letter-spacing: -0.02em;
       color: #64d2ff;
@@ -170,32 +171,32 @@
     /* ── rows: center-outward-expansion wrap (direct-into-slot form) ── */
     [id="05-pick-the-room-rows"] {
       position: absolute;
-      left: 22px;
-      top: 74px;
-      width: 422px;
-      height: 436px;
+      left: 29px;
+      top: 98px;
+      width: 558px;
+      height: 577px;
     }
     [class~="05-pick-the-room-row"] {
       position: absolute;
       top: 50%;
       left: 50%; /* GSAP xPercent/yPercent -50 bakes the centering; x/y tween the offset */
-      width: 422px;
-      height: 136px;
+      width: 558px;
+      height: 180px;
       box-sizing: border-box;
       display: flex;
       align-items: center;
-      gap: 22px;
-      padding: 0 24px;
+      gap: 29px;
+      padding: 0 32px;
       background: rgba(255, 255, 255, 0.06);
-      border: 1.5px solid rgba(100, 210, 255, 0.2);
-      border-radius: 12px;
+      border: 2px solid rgba(100, 210, 255, 0.2);
+      border-radius: 16px;
       will-change: transform, opacity;
     }
     [class~="05-pick-the-room-sym"] {
       position: relative;
-      width: 78px;
-      height: 78px;
-      flex: 0 0 78px;
+      width: 103px;
+      height: 103px;
+      flex: 0 0 103px;
     }
     [class~="05-pick-the-room-circle"] {
       position: absolute;
@@ -208,13 +209,13 @@
       z-index: 2;
     }
     [class~="05-pick-the-room-circle"] svg {
-      width: 44px;
-      height: 44px;
+      width: 58px;
+      height: 58px;
       display: block;
     }
     [id="05-pick-the-room-glow"] {
       position: absolute;
-      inset: -34px;
+      inset: -45px;
       border-radius: 50%;
       background: radial-gradient(
         circle,
@@ -235,85 +236,85 @@
     [class~="05-pick-the-room-title"] {
       font-family: "Space Grotesk", sans-serif;
       font-weight: 600;
-      font-size: 34px;
+      font-size: 45px;
       line-height: 1.15;
       letter-spacing: -0.02em;
       color: #ffffff;
     }
     [class~="05-pick-the-room-detail"] {
-      margin-top: 6px;
+      margin-top: 8px;
       font-family: "Inter", sans-serif;
       font-weight: 400;
-      font-size: 24px;
+      font-size: 32px;
       line-height: 1.3;
       color: #a1a1a6;
     }
   </style>
 
-  <div data-hf-id="hf-iyd0" id="root" data-composition-id="05-pick-the-room" data-width="1080" data-height="1080" data-duration="3.807">
-    <div data-hf-id="hf-3ck6" id="05-pick-the-room-bg" class="clip" data-start="0" data-duration="3.807" data-track-index="0"></div>
+  <div data-hf-id="hf-r05a" id="root" data-composition-id="05-pick-the-room" data-width="1080" data-height="1080" data-duration="3.807">
+    <div data-hf-id="hf-r05b" id="05-pick-the-room-bg" class="clip" data-start="0" data-duration="3.807" data-track-index="0"></div>
 
-    <div data-hf-id="hf-3zyy" id="05-pick-the-room-stage" class="clip" data-start="0" data-duration="3.807" data-track-index="1">
-      <div data-hf-id="hf-8pma" id="05-pick-the-room-headline">Pick the room</div>
+    <div data-hf-id="hf-r05c" id="05-pick-the-room-stage" class="clip" data-start="0" data-duration="3.807" data-track-index="1">
+      <div data-hf-id="hf-r05d" id="05-pick-the-room-headline">Pick the room</div>
 
-      <div data-hf-id="hf-gkn4" id="05-pick-the-room-strap-top" class="05-pick-the-room-strap"></div>
-      <div data-hf-id="hf-y7mq" id="05-pick-the-room-strap-bottom" class="05-pick-the-room-strap"></div>
-      <div data-hf-id="hf-kor6" id="05-pick-the-room-crown"></div>
-      <div data-hf-id="hf-bq21" id="05-pick-the-room-button"></div>
+      <div data-hf-id="hf-r05e" id="05-pick-the-room-strap-top" class="05-pick-the-room-strap"></div>
+      <div data-hf-id="hf-r05f" id="05-pick-the-room-strap-bottom" class="05-pick-the-room-strap"></div>
+      <div data-hf-id="hf-r05g" id="05-pick-the-room-crown"></div>
+      <div data-hf-id="hf-r05h" id="05-pick-the-room-button"></div>
 
-      <div data-hf-id="hf-qpzh" id="05-pick-the-room-case">
-        <div data-hf-id="hf-si2m" id="05-pick-the-room-face">
-          <div data-hf-id="hf-q0wn" id="05-pick-the-room-wordmark">two.ears</div>
+      <div data-hf-id="hf-r05i" id="05-pick-the-room-case">
+        <div data-hf-id="hf-r05j" id="05-pick-the-room-face">
+          <div data-hf-id="hf-r05k" id="05-pick-the-room-wordmark">two.ears</div>
 
-          <div data-hf-id="hf-ic8i" id="05-pick-the-room-rows">
+          <div data-hf-id="hf-r05l" id="05-pick-the-room-rows">
             <!-- Listen -->
-            <div data-hf-id="hf-bhx4" class="05-pick-the-room-row" data-target-x="0" data-target-y="-150">
-              <div data-hf-id="hf-xik3" class="05-pick-the-room-sym">
-                <div data-hf-id="hf-flqa" id="05-pick-the-room-glow"></div>
-                <div data-hf-id="hf-3ol2" class="05-pick-the-room-circle">
-                  <svg data-hf-id="hf-atep" viewBox="0 0 48 48" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path data-hf-id="hf-fbpu" d="M14 20a10 10 0 0 1 20 0c0 6-4 8.5-5.5 12.5C27.2 36 25.2 39 21.5 39c-3.2 0-5.5-2-5.5-4.5" />
-                    <path data-hf-id="hf-s0l6" d="M20.5 20.5a3.5 3.5 0 0 1 7 0c0 3-2.5 4-3 7.5" />
+            <div data-hf-id="hf-r05m" class="05-pick-the-room-row" data-target-x="0" data-target-y="-198">
+              <div data-hf-id="hf-r05n" class="05-pick-the-room-sym">
+                <div data-hf-id="hf-r05o" id="05-pick-the-room-glow"></div>
+                <div data-hf-id="hf-r05p" class="05-pick-the-room-circle">
+                  <svg data-hf-id="hf-r05q" viewBox="0 0 48 48" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path data-hf-id="hf-r05r" d="M14 20a10 10 0 0 1 20 0c0 6-4 8.5-5.5 12.5C27.2 36 25.2 39 21.5 39c-3.2 0-5.5-2-5.5-4.5" />
+                    <path data-hf-id="hf-r05s" d="M20.5 20.5a3.5 3.5 0 0 1 7 0c0 3-2.5 4-3 7.5" />
                   </svg>
                 </div>
               </div>
-              <div data-hf-id="hf-pd1h" class="05-pick-the-room-copy">
-                <div data-hf-id="hf-29jz" class="05-pick-the-room-title">Listen</div>
-                <div data-hf-id="hf-9ofh" class="05-pick-the-room-detail">Tap past 40%</div>
+              <div data-hf-id="hf-r05t" class="05-pick-the-room-copy">
+                <div data-hf-id="hf-r05u" class="05-pick-the-room-title">Listen</div>
+                <div data-hf-id="hf-r05v" class="05-pick-the-room-detail">Tap past 40%</div>
               </div>
             </div>
 
             <!-- Balanced -->
-            <div data-hf-id="hf-tten" class="05-pick-the-room-row" data-target-x="0" data-target-y="0">
-              <div data-hf-id="hf-tksz" class="05-pick-the-room-sym">
-                <div data-hf-id="hf-cxwa" class="05-pick-the-room-circle">
-                  <svg data-hf-id="hf-429h" viewBox="0 0 48 48" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path data-hf-id="hf-vgtp" d="M9 13a3 3 0 0 1 3-3h17a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-3v5l-5-5H12a3 3 0 0 1-3-3z" />
-                    <path data-hf-id="hf-fdht" d="M20 21h16a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3h-3v5l-5-5h-8a3 3 0 0 1-3-3v-8a3 3 0 0 1 3-3z" fill="#64d2ff" />
+            <div data-hf-id="hf-r05w" class="05-pick-the-room-row" data-target-x="0" data-target-y="0">
+              <div data-hf-id="hf-r05x" class="05-pick-the-room-sym">
+                <div data-hf-id="hf-r05y" class="05-pick-the-room-circle">
+                  <svg data-hf-id="hf-r05z" viewBox="0 0 48 48" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path data-hf-id="hf-r060" d="M9 13a3 3 0 0 1 3-3h17a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-3v5l-5-5H12a3 3 0 0 1-3-3z" />
+                    <path data-hf-id="hf-r061" d="M20 21h16a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3h-3v5l-5-5h-8a3 3 0 0 1-3-3v-8a3 3 0 0 1 3-3z" fill="#64d2ff" />
                   </svg>
                 </div>
               </div>
-              <div data-hf-id="hf-5sih" class="05-pick-the-room-copy">
-                <div data-hf-id="hf-hr6c" class="05-pick-the-room-title">Balanced</div>
-                <div data-hf-id="hf-mimz" class="05-pick-the-room-detail">Tap past 55%</div>
+              <div data-hf-id="hf-r062" class="05-pick-the-room-copy">
+                <div data-hf-id="hf-r063" class="05-pick-the-room-title">Balanced</div>
+                <div data-hf-id="hf-r064" class="05-pick-the-room-detail">Tap past 55%</div>
               </div>
             </div>
 
             <!-- Presenting -->
-            <div data-hf-id="hf-ykyt" class="05-pick-the-room-row" data-target-x="0" data-target-y="150">
-              <div data-hf-id="hf-t6hy" class="05-pick-the-room-sym">
-                <div data-hf-id="hf-dc7b" class="05-pick-the-room-circle">
-                  <svg data-hf-id="hf-596k" viewBox="0 0 48 48" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <circle data-hf-id="hf-f9sj" cx="18" cy="17" r="6" />
-                    <path data-hf-id="hf-989w" d="M6 38c0-7 5.4-11 12-11s12 4 12 11" />
-                    <path data-hf-id="hf-v6hv" d="M33 14a8 8 0 0 1 0 12" />
-                    <path data-hf-id="hf-9061" d="M38 9.5a14.5 14.5 0 0 1 0 21" />
+            <div data-hf-id="hf-r065" class="05-pick-the-room-row" data-target-x="0" data-target-y="198">
+              <div data-hf-id="hf-r066" class="05-pick-the-room-sym">
+                <div data-hf-id="hf-r067" class="05-pick-the-room-circle">
+                  <svg data-hf-id="hf-r068" viewBox="0 0 48 48" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle data-hf-id="hf-r069" cx="18" cy="17" r="6" />
+                    <path data-hf-id="hf-r06a" d="M6 38c0-7 5.4-11 12-11s12 4 12 11" />
+                    <path data-hf-id="hf-r06b" d="M33 14a8 8 0 0 1 0 12" />
+                    <path data-hf-id="hf-r06c" d="M38 9.5a14.5 14.5 0 0 1 0 21" />
                   </svg>
                 </div>
               </div>
-              <div data-hf-id="hf-6zfk" class="05-pick-the-room-copy">
-                <div data-hf-id="hf-pz5d" class="05-pick-the-room-title">Presenting</div>
-                <div data-hf-id="hf-r30i" class="05-pick-the-room-detail">Stats only</div>
+              <div data-hf-id="hf-r06d" class="05-pick-the-room-copy">
+                <div data-hf-id="hf-r06e" class="05-pick-the-room-title">Presenting</div>
+                <div data-hf-id="hf-r06f" class="05-pick-the-room-detail">Stats only</div>
               </div>
             </div>
           </div>
@@ -326,7 +327,7 @@
   <script>
     (function () {
       var FRAME_ID = "05-pick-the-room";
-      var DURATION = 3.029;
+      var DURATION = 3.307;
       var root = document.querySelector('[data-composition-id="' + FRAME_ID + '"]');
       var q = function (id) { return root.querySelector('[id="' + FRAME_ID + "-" + id + '"]'); };
 
@@ -337,9 +338,9 @@
 
       var tl = gsap.timeline({ paused: true });
 
-      /* ── Scene 1 (0.0–~0.95s): the drawn watch holds at center from t=0;
-         "Pick the room" arrives above it on the VO cue. A slow camera push-in
-         (blueprint hold move) runs underneath for the whole shot. ── */
+      /* ── Scene 1 (0.0–~1.2s): the drawn watch holds at center from t=0, now at
+         hero scale; "Pick the room" arrives above it on the VO cue. A slow
+         camera push-in (blueprint hold move) runs underneath the whole shot. ── */
       tl.fromTo(
         stage,
         { scale: 1, transformOrigin: "50% 50%" },
@@ -350,15 +351,15 @@
         headline,
         { opacity: 0, y: 18 },
         { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" },
-        0.15
+        0.12
       );
 
-      /* ── Scene 2 (~0.95–2.8s): three rows assemble one per spoken word —
+      /* ── Scene 2 (~0.7–2.65s): three rows assemble one per spoken word —
          center-outward-expansion, direct-into-slot (partially-spread start),
          each row sliding a short path into its own slot. Listen / Balanced /
          Presenting land on their VO cues. ── */
-      var ROW_AT = [1.0, 1.6, 2.2];
-      var EXPAND_DUR = 0.6;
+      var ROW_AT = [0.7, 1.4, 2.1];
+      var EXPAND_DUR = 0.55;
       var START_PROGRESS = 0.35;
       for (var i = 0; i < rows.length; i++) {
         var el = rows[i];
@@ -372,16 +373,16 @@
         );
       }
 
-      /* ── Scene 3 (~2.55s–end): the list holds; the Listen circle glows once —
+      /* ── Scene 3 (~2.75s–end): the list holds; the Listen circle glows once —
          ambient-glow-bloom, pulse-on-arrival form: bloom slightly past peak,
          then ease to a low steady hold. One pass, no loop. ── */
       tl.fromTo(
         glow,
         { opacity: 0, scale: 0.85, transformOrigin: "50% 50%" },
         { opacity: 0.38, scale: 1.06, duration: 0.28, ease: "power2.out" },
-        2.55
+        2.75
       );
-      tl.to(glow, { opacity: 0.24, scale: 1, duration: 0.2, ease: "power1.inOut" }, 2.83);
+      tl.to(glow, { opacity: 0.24, scale: 1, duration: 0.2, ease: "power1.inOut" }, 3.03);
 
       window.__timelines = window.__timelines || {};
       window.__timelines[FRAME_ID] = tl;

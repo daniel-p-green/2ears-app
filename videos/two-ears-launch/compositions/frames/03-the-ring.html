@@ -27,51 +27,65 @@
     /* ground: full-bleed black with a faint cold vignette behind the watch */
     #root .ring3-bg {
       background:
-        radial-gradient(circle at 50% 46%, rgba(15, 51, 133, 0.22) 0%, rgba(15, 51, 133, 0) 62%),
+        radial-gradient(circle at 50% 50%, rgba(15, 51, 133, 0.22) 0%, rgba(15, 51, 133, 0) 62%),
         #000000;
     }
 
-    /* caption line above the watch */
+    /* caption line above the watch — squeezed into the thin top margin above the hero watch */
     #root .ring3-capline {
       position: absolute;
       left: 0;
-      top: 52px;
+      top: 4px;
       width: 1080px;
-      height: 48px;
+      height: 44px;
     }
     #root .ring3-cap {
       position: absolute;
       left: 0;
       top: 0;
       width: 1080px;
-      height: 48px;
-      line-height: 48px;
+      height: 44px;
+      line-height: 44px;
       text-align: center;
       font-family: "Inter", sans-serif;
       font-weight: 500;
-      font-size: 34px;
+      font-size: 28px;
       letter-spacing: -0.01em;
       color: #A1A1A6;
       opacity: 0;
     }
 
-    /* tap pulses — thin orange rings emerging from behind the watch */
+    /* tap pulses — thin orange rings emerging from behind the watch, scaled + recentered on the hero watch */
     #root .ring3-pulse {
       position: absolute;
-      left: 300px;
-      top: 260px;
-      width: 480px;
-      height: 480px;
+      left: 228px;
+      top: 233px;
+      width: 624px;
+      height: 624px;
       border-radius: 50%;
       border: 2px solid #FF9F0A;
       opacity: 0;
     }
 
-    /* the drawn watch */
+    /* hero-scale wrapper: a static, GSAP-untouched CSS scale so the drawn watch (unchanged
+       internal geometry) renders at ~90% of the 1080px canvas height with a thin top/bottom
+       margin. GSAP only ever tweens the inner .ring3-watch (entrance + ambient drift), never
+       this wrapper, so there is no transform conflict. */
+    #root .ring3-hero {
+      position: absolute;
+      left: 215px;
+      top: 155px;
+      width: 500px;
+      height: 600px;
+      transform: scale(1.3);
+      transform-origin: 0 0;
+    }
+
+    /* the drawn watch (geometry unchanged from the prior smaller-inset build) */
     #root .ring3-watch {
       position: absolute;
-      left: 290px;
-      top: 200px;
+      left: 0;
+      top: 0;
       width: 500px;
       height: 600px;
     }
@@ -236,27 +250,29 @@
       <div data-hf-id="hf-buc9" class="ring3-pulse" id="03-the-ring-pulse-3"></div>
     </div>
 
-    <!-- track 2: the drawn watch -->
+    <!-- track 2: the drawn watch, hero-scaled via a static wrapper transform -->
     <div data-hf-id="hf-26er" class="clip" data-start="0" data-duration="10.143" data-track-index="2">
-      <div data-hf-id="hf-2p0x" class="ring3-watch" id="03-the-ring-watch">
-        <div data-hf-id="hf-nb9s" class="ring3-band ring3-band-top"></div>
-        <div data-hf-id="hf-d8ya" class="ring3-band ring3-band-bottom"></div>
-        <div data-hf-id="hf-k2lb" class="ring3-crown"></div>
-        <div data-hf-id="hf-2ai9" class="ring3-sidebtn"></div>
-        <div data-hf-id="hf-o6bm" class="ring3-case"></div>
-        <div data-hf-id="hf-77eq" class="ring3-screen">
-          <div data-hf-id="hf-mjdi" class="ring3-glow ring3-glow-cyan" id="03-the-ring-glow-cyan"></div>
-          <div data-hf-id="hf-onts" class="ring3-glow ring3-glow-orange" id="03-the-ring-glow-orange"></div>
-          <svg data-hf-id="hf-9yux" class="ring3-svg" viewBox="0 0 456 556" xmlns="http://www.w3.org/2000/svg">
-            <circle data-hf-id="hf-srjg" class="ring3-track" cx="228" cy="300" r="142" />
-            <circle data-hf-id="hf-5bre" class="ring3-fill" id="03-the-ring-fill" cx="228" cy="300" r="142" stroke="#64D2FF" />
-            <line data-hf-id="hf-1feq" class="ring3-tick" id="03-the-ring-tick" x1="305.6" y1="406.8" x2="329.1" y2="439.1" />
-          </svg>
-          <div data-hf-id="hf-eh6p" class="ring3-value">
-            <div data-hf-id="hf-ifd7" class="ring3-numwrap" id="03-the-ring-numwrap">
-              <span data-hf-id="hf-5ir2" class="ring3-num" id="03-the-ring-num">0</span><span data-hf-id="hf-9b23" class="ring3-suffix" id="03-the-ring-suffix">%</span>
+      <div data-hf-id="hf-hero" class="ring3-hero">
+        <div data-hf-id="hf-2p0x" class="ring3-watch" id="03-the-ring-watch">
+          <div data-hf-id="hf-nb9s" class="ring3-band ring3-band-top"></div>
+          <div data-hf-id="hf-d8ya" class="ring3-band ring3-band-bottom"></div>
+          <div data-hf-id="hf-k2lb" class="ring3-crown"></div>
+          <div data-hf-id="hf-2ai9" class="ring3-sidebtn"></div>
+          <div data-hf-id="hf-o6bm" class="ring3-case"></div>
+          <div data-hf-id="hf-77eq" class="ring3-screen">
+            <div data-hf-id="hf-mjdi" class="ring3-glow ring3-glow-cyan" id="03-the-ring-glow-cyan"></div>
+            <div data-hf-id="hf-onts" class="ring3-glow ring3-glow-orange" id="03-the-ring-glow-orange"></div>
+            <svg data-hf-id="hf-9yux" class="ring3-svg" viewBox="0 0 456 556" xmlns="http://www.w3.org/2000/svg">
+              <circle data-hf-id="hf-srjg" class="ring3-track" cx="228" cy="300" r="142" />
+              <circle data-hf-id="hf-5bre" class="ring3-fill" id="03-the-ring-fill" cx="228" cy="300" r="142" stroke="#64D2FF" />
+              <line data-hf-id="hf-1feq" class="ring3-tick" id="03-the-ring-tick" x1="305.6" y1="406.8" x2="329.1" y2="439.1" />
+            </svg>
+            <div data-hf-id="hf-eh6p" class="ring3-value">
+              <div data-hf-id="hf-ifd7" class="ring3-numwrap" id="03-the-ring-numwrap">
+                <span data-hf-id="hf-5ir2" class="ring3-num" id="03-the-ring-num">0</span><span data-hf-id="hf-9b23" class="ring3-suffix" id="03-the-ring-suffix">%</span>
+              </div>
+              <div data-hf-id="hf-0qjf" class="ring3-label" id="03-the-ring-label">talking</div>
             </div>
-            <div data-hf-id="hf-0qjf" class="ring3-label" id="03-the-ring-label">talking</div>
           </div>
         </div>
       </div>

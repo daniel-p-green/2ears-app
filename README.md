@@ -20,9 +20,16 @@ From the command line:
       -destination 'platform=watchOS Simulator,name=Apple Watch Series 12 (42mm)' build
 
 Screens: Start (intent picker, history, streak), Live (a single ring showing your share of
-the trailing two minutes, orange once you cross the threshold, elapsed time, End), Summary
+the trailing five minutes, orange once you cross the threshold, elapsed time, End), Summary
 (Listening Score with its breakdown, share against target, sparkline per minute, longest
 stretch, nudges and whether you course-corrected), History (30-day retention, swipe to delete).
+
+The talk-share window (`ClassifierConfig.shareWindowSec`) was raised from the spec's original
+2-minute default to 5 minutes, so a brief pause or interruption doesn't wash the reading out
+and a longer conversation gets a read that reflects more than its last 120 seconds. The
+minimum-evidence gate (`minVoicedSec`) scales with it, staying at 12.5% of the window (37.5s).
+The M0 harness's Scorer and the watch app share this same `ClassifierConfig`, so both surfaces
+moved together.
 
 The Listening Score is a 0 to 100 rating in the Sleep Score idiom, computed in `TwoEarsCore`
 (`ListeningScore`) from the summary alone: 60 points for staying at or under your target

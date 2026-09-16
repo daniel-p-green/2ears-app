@@ -14,8 +14,8 @@ final class ClassifierConfigTests: XCTestCase {
         XCTAssertEqual(c.minBurstMs, 800)
         XCTAssertEqual(c.userBandDb, 16)
         XCTAssertEqual(c.uncertainMarginDb, 3)
-        XCTAssertEqual(c.shareWindowSec, 120)
-        XCTAssertEqual(c.minVoicedSec, 15)
+        XCTAssertEqual(c.shareWindowSec, 300)
+        XCTAssertEqual(c.minVoicedSec, 37.5)
         XCTAssertEqual(c.maxUncertainFraction, 0.30)
     }
 
@@ -24,7 +24,7 @@ final class ClassifierConfigTests: XCTestCase {
         XCTAssertEqual(c.samplesPerWindow, 1600)
         XCTAssertEqual(c.floorWindowCount, 100)
         XCTAssertEqual(c.minBurstWindows, 8)
-        XCTAssertEqual(c.shareWindowCount, 1200)
+        XCTAssertEqual(c.shareWindowCount, 3000)
     }
 
     func testPartialJsonOverridesOnlyNamedKeys() throws {

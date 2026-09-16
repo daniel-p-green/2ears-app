@@ -54,17 +54,19 @@ final class PipelineTests: XCTestCase {
         var e = TalkShareEstimator(config: .default)
         for window in w { e.push(window) }
         XCTAssertEqual(share, e.share)
-        XCTAssertEqual(share, .uncertain)   // only 6 s voiced, under the 15 s gate
+        XCTAssertEqual(share, .uncertain)   // only 6 s voiced, under the 37.5 s gate
     }
 
     func testShareBecomesValueWithEnoughEvidence() {
         // Continuous tone for more than 10 s would drag the noise floor up to the tone level and
         // mute VAD, so both speech segments use the dipped pattern (see Signal.dippedTone).
+        // 220 windows/segment * 0.9 voiced ≈ 198 voiced windows/segment = 39.6 s total, clearing
+        // the 37.5 s minimum-evidence gate while keeping the 50/50 split for the 0.5 assertion.
         let s = Signal.noise(dbfs: -60, count: 3 * 16000)
-            + Signal.dippedTone(dbfs: -30, noiseDb: -60, windows: 100)
-            + Signal.dippedTone(dbfs: -48, noiseDb: -60, windows: 100)
+            + Signal.dippedTone(dbfs: -30, noiseDb: -60, windows: 220)
+            + Signal.dippedTone(dbfs: -48, noiseDb: -60, windows: 220)
         let (_, share) = runAll(s, chunk: 4096)
         guard case .value(let v) = share else { return XCTFail("expected a value, got \(share)") }
-        XCTAssertEqual(v, 0.5, accuracy: 0.02)   // 90 user and 90 room voiced windows
+        XCTAssertEqual(v, 0.5, accuracy: 0.02)   // 198 user and 198 room voiced windows
     }
 }

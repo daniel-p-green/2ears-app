@@ -13,8 +13,12 @@ public struct ClassifierConfig: Codable, Equatable, Sendable {
     public var minBurstMs: Int = 800
     public var userBandDb: Double = 16
     public var uncertainMarginDb: Double = 3
-    public var shareWindowSec: Double = 120
-    public var minVoicedSec: Double = 15
+    /// Trailing window the talk-share estimate is computed over. The spec's starting value was
+    /// 120 (2 minutes); raised to 5 minutes so a brief interruption doesn't wash the reading out
+    /// and a longer conversation gets a rolling read that reflects more than its last two minutes.
+    public var shareWindowSec: Double = 300
+    /// Scaled with shareWindowSec so the minimum-evidence gate stays proportional (12.5% of the window).
+    public var minVoicedSec: Double = 37.5
     public var maxUncertainFraction: Double = 0.30
 
     public init() {}
