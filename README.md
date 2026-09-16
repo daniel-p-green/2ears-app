@@ -4,6 +4,12 @@ A private talk-share coach for Apple Watch. It measures how much of a conversati
 talking, from loudness alone, and taps your wrist when you cross the share you chose.
 No audio is stored, transcribed, or sent anywhere.
 
+![two.ears demo](docs/demo/two-ears-launch.gif)
+
+[Watch with sound (MP4, 39.9s)](docs/demo/two-ears-launch.mp4) — the GIF above has no audio
+track (GIFs never do); the MP4 carries the background score. The video itself has no narration
+by design, on-screen type carries the story.
+
 This repo holds three things:
 
 - `Sources/TwoEarsCore`: the classifier (level, noise floor, VAD, attribution, talk share).
