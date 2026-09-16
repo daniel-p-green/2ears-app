@@ -3,10 +3,12 @@ import Foundation
 
 /// Live wrist microphone through AVAudioEngine, converted to 16 kHz mono in memory.
 /// Buffers are consumed and released; nothing is written anywhere.
+/// Suspends for phone calls and other audio interruptions and resumes afterwards.
 final class MicrophoneAudioSource: AudioSource {
     private let engine = AVAudioEngine()
     private let targetFormat = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: 16000,
                                              channels: 1, interleaved: false)!
+    private var interruptionObserver: NSObjectProtocol?
 
     func start(handler: @escaping @Sendable ([Float]) -> Void) throws {
         let audioSession = AVAudioSession.sharedInstance()
@@ -40,11 +42,41 @@ final class MicrophoneAudioSource: AudioSource {
         }
         engine.prepare()
         try engine.start()
+
+        interruptionObserver = NotificationCenter.default.addObserver(
+            forName: AVAudioSession.interruptionNotification, object: audioSession, queue: .main
+        ) { [weak self] note in
+            let typeRaw = note.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt
+            let optionsRaw = note.userInfo?[AVAudioSessionInterruptionOptionKey] as? UInt
+            MainActor.assumeIsolated {
+                self?.handleInterruption(typeRaw: typeRaw, optionsRaw: optionsRaw)
+            }
+        }
     }
 
     func stop() {
+        if let interruptionObserver {
+            NotificationCenter.default.removeObserver(interruptionObserver)
+        }
+        interruptionObserver = nil
         engine.inputNode.removeTap(onBus: 0)
         engine.stop()
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+    }
+
+    private func handleInterruption(typeRaw: UInt?, optionsRaw: UInt?) {
+        guard let typeRaw, let type = AVAudioSession.InterruptionType(rawValue: typeRaw) else { return }
+        switch type {
+        case .began:
+            engine.pause()
+        case .ended:
+            let options = optionsRaw.map(AVAudioSession.InterruptionOptions.init(rawValue:)) ?? []
+            if options.contains(.shouldResume) {
+                try? AVAudioSession.sharedInstance().setActive(true)
+                try? engine.start()
+            }
+        @unknown default:
+            break
+        }
     }
 }

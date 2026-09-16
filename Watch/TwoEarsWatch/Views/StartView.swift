@@ -45,13 +45,10 @@ struct StartView: View {
         .task {
             try? SessionStore.prune(in: context)
         }
-        .alert("Couldn't Start", isPresented: Binding(
-            get: { session.startError != nil },
-            set: { if !$0 { session.startError = nil } })
-        ) {
+        .alert("Couldn't Start", isPresented: $session.isShowingStartError) {
             Button("OK", role: .cancel) {}
         } message: {
-            Text(session.startError ?? "")
+            Text(session.startError)
         }
     }
 

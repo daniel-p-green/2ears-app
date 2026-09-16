@@ -30,6 +30,12 @@ struct SessionControlsView: View {
                 Text("^[\(session.nudgeCount) nudge](inflect: true)")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
+                if session.isLowBattery {
+                    Label("Low battery", systemImage: "battery.25percent")
+                        .font(.footnote)
+                        .foregroundStyle(.orange)
+                        .padding(.top, 2)
+                }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

@@ -3,12 +3,10 @@ import SwiftUI
 
 @main
 struct TwoEarsWatchApp: App {
-    @State private var session = SessionManager()
-
     var body: some Scene {
         WindowGroup {
             RootView()
-                .environment(session)
+                .environment(SessionManager.shared)
         }
         .modelContainer(for: SessionRecord.self)
     }

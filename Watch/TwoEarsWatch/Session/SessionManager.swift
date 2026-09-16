@@ -4,12 +4,15 @@ import TwoEarsCore
 import WatchKit
 
 /// Owns the session lifecycle and the app state machine: idle, active, ended.
+/// Everything it publishes derives from window aggregates; no audio is retained.
 @Observable
 @MainActor
 final class SessionManager {
     enum Phase: Equatable {
         case idle, active, ended
     }
+
+    static let shared = SessionManager()
 
     private(set) var phase: Phase = .idle
     private(set) var intent: SessionIntent = .listen
@@ -18,103 +21,125 @@ final class SessionManager {
     private(set) var elapsed: TimeInterval = 0
     private(set) var nudgeCount = 0
     private(set) var isOverThreshold = false
+    private(set) var isLowBattery = false
     private(set) var lastSummary: SessionSummaryData?
-    var startError: String?
+    var isShowingStartError = false
+    private(set) var startError = ""
 
     /// Seconds of silence before a session ends itself.
     var autoEndAfterSilence: TimeInterval = 180
-    /// A nudge counts as followed when share drops this much within two minutes.
-    var followedDrop = 0.05
+    /// Battery fraction at which the controls page warns.
+    var lowBatteryLevel: Float = 0.20
+    /// Battery fraction at which the session ends itself to protect the day.
+    var criticalBatteryLevel: Float = 0.05
 
     private let config = ClassifierConfig.default
     private var pipeline: Pipeline?
     private var source: AudioSource?
-    private var nudges = NudgeController(threshold: nil)
+    private var nudges = NudgeController(config: NudgeConfig(threshold: nil))
+    private var aggregator = SessionAggregator()
     private var runtime: RuntimeSession?
     private var ticker: Task<Void, Never>?
-    private var stats = SessionStats()
-    private var pendingNudgeChecks: [(due: TimeInterval, shareAtNudge: Double)] = []
+    private var isEnding = false
+
+    init(sourceFactory: @escaping @MainActor () -> AudioSource = AudioSources.make) {
+        self.sourceFactory = sourceFactory
+    }
+
+    private let sourceFactory: @MainActor () -> AudioSource
 
     func start(intent: SessionIntent) async {
-        guard phase != .active else { return }
+        guard phase == .idle else { return }
         do {
             try await MicrophonePermission.request()
         } catch {
-            startError = "2Ears needs the microphone to measure how loud the room is. Allow it in Settings."
+            fail("two.ears needs the microphone to measure how loud the room is. Allow it in Settings.")
             return
         }
 
         self.intent = intent
         pipeline = Pipeline(config: config)
-        nudges = NudgeController(threshold: intent.threshold)
-        stats = SessionStats()
-        pendingNudgeChecks = []
+        nudges = NudgeController(config: NudgeConfig(threshold: intent.threshold))
+        aggregator = SessionAggregator()
         share = .uncertain
         nudgeCount = 0
         isOverThreshold = false
+        isLowBattery = false
         elapsed = 0
-        startedAt = .now
         lastSummary = nil
+        isEnding = false
 
-        let source = AudioSources.make()
+        let source = sourceFactory()
         do {
             try source.start { [weak self] samples in
                 Task { @MainActor in self?.ingest(samples) }
             }
         } catch {
-            startError = "The microphone is busy or unavailable."
+            pipeline = nil
+            fail("The microphone is busy or unavailable.")
             return
         }
         self.source = source
+        startedAt = .now
 
         let runtime = RuntimeSession()
         runtime.onExpire = { [weak self] in self?.end(reason: .interruption) }
         runtime.start()
         self.runtime = runtime
 
+        WKInterfaceDevice.current().isBatteryMonitoringEnabled = true
         phase = .active
         ticker = Task { [weak self] in
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(1))
+                guard !Task.isCancelled else { return }
                 self?.tick()
             }
         }
     }
 
     func end(reason: SessionEndReason) {
-        guard phase == .active, let startedAt, let pipeline else { return }
+        guard phase == .active, !isEnding, let startedAt, let pipeline else { return }
+        isEnding = true
         ticker?.cancel()
         ticker = nil
         source?.stop()
         source = nil
         runtime?.stop()
         runtime = nil
+        WKInterfaceDevice.current().isBatteryMonitoringEnabled = false
 
-        stats.record(pipeline.finish(), windowSeconds: config.windowSeconds)
+        aggregator.record(pipeline.finish(), config: config)
         share = pipeline.currentShare
-        resolvePendingNudges(upTo: .infinity)
+        aggregator.finish(share: share)
 
-        let talkShare: Double? = if case .value(let v) = share { v } else { nil }
         lastSummary = SessionSummaryData(
             id: UUID(),
             startedAt: startedAt,
             endedAt: .now,
             intent: intent,
-            talkShare: talkShare,
-            uncertainFraction: stats.uncertainFraction,
-            longestUserStretch: stats.longestUserStretch,
-            nudgeCount: nudgeCount,
-            nudgesFollowed: stats.nudgesFollowed,
-            perMinuteShare: stats.perMinuteShare,
+            talkShare: share.valueOrNil,
+            uncertainFraction: aggregator.uncertainFraction,
+            longestUserStretch: aggregator.longestUserStretchSeconds,
+            nudgeCount: aggregator.nudgeCount,
+            nudgesFollowed: aggregator.nudgesFollowed,
+            perMinuteShare: aggregator.perMinuteShare,
             endReason: reason)
         self.pipeline = nil
         phase = .ended
+        isEnding = false
     }
 
     func dismissSummary() {
+        guard phase == .ended else { return }
         lastSummary = nil
         startedAt = nil
         phase = .idle
+    }
+
+    private func fail(_ message: String) {
+        startError = message
+        isShowingStartError = true
     }
 
     private var elapsedNow: TimeInterval {
@@ -122,61 +147,35 @@ final class SessionManager {
     }
 
     private func ingest(_ samples: [Float]) {
-        guard phase == .active, let pipeline else { return }
+        guard phase == .active, !isEnding, let pipeline else { return }
         let windows = pipeline.process(samples)
         guard !windows.isEmpty else { return }
-        stats.record(windows, windowSeconds: config.windowSeconds)
+        aggregator.record(windows, config: config)
         share = pipeline.currentShare
         let now = elapsedNow
         if let tap = nudges.update(share: share, at: now) {
             Haptics.play(tap)
-            nudgeCount += 1
-            if case .value(let value) = share {
-                pendingNudgeChecks.append((due: now + 120, shareAtNudge: value))
-            }
+            aggregator.recordNudge(at: now, share: share)
+            nudgeCount = aggregator.nudgeCount
         }
         isOverThreshold = nudges.isOverThreshold
     }
 
     private func tick() {
-        guard phase == .active else { return }
+        guard phase == .active, !isEnding else { return }
         elapsed = elapsedNow
-        let minute = Int(elapsed / 60)
-        while stats.perMinuteShare.count < minute {
-            let value: Double? = if case .value(let v) = share { v } else { nil }
-            stats.perMinuteShare.append(value)
+        aggregator.tick(elapsed: elapsed, share: share)
+
+        let battery = WKInterfaceDevice.current().batteryLevel
+        if battery >= 0 {
+            isLowBattery = battery <= lowBatteryLevel
+            if battery <= criticalBatteryLevel {
+                end(reason: .battery)
+                return
+            }
         }
-        resolvePendingNudges(upTo: elapsed)
-        if elapsed > autoEndAfterSilence, elapsed - stats.lastVoicedAt > autoEndAfterSilence {
+        if elapsed > autoEndAfterSilence, elapsed - aggregator.lastVoicedAt > autoEndAfterSilence {
             end(reason: .autoSilence)
-        }
-    }
-
-    private func resolvePendingNudges(upTo time: TimeInterval) {
-        let current: Double? = if case .value(let v) = share { v } else { nil }
-        let due = pendingNudgeChecks.filter { $0.due <= time }
-        pendingNudgeChecks.removeAll { $0.due <= time }
-        for check in due {
-            if let current, current <= check.shareAtNudge - followedDrop {
-                stats.nudgesFollowed += 1
-            }
-        }
-    }
-}
-
-enum Haptics {
-    @MainActor
-    static func play(_ tap: NudgeController.Tap) {
-        let device = WKInterfaceDevice.current()
-        switch tap {
-        case .single:
-            device.play(.notification)
-        case .double:
-            device.play(.notification)
-            Task { @MainActor in
-                try? await Task.sleep(for: .milliseconds(350))
-                device.play(.notification)
-            }
         }
     }
 }
