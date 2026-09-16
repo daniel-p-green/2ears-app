@@ -67,7 +67,7 @@ struct ShareRing: View {
     }
 
     private var ringColor: Color {
-        isOverThreshold ? .orange : .blue
+        isOverThreshold ? .orange : .accentColor
     }
 
     private var accessibilityValue: String {

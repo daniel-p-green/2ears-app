@@ -29,12 +29,12 @@ struct ActiveSessionView: View {
                   threshold: session.intent.threshold,
                   isOverThreshold: session.isOverThreshold,
                   lineWidth: 14)
-            .padding(.horizontal, 6)
-            .padding(.bottom, 4)
+            .padding(.horizontal, 10)
+            .padding(.bottom, 6)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     private var glow: Color {
-        session.isOverThreshold ? .orange : session.intent.tint
+        session.isOverThreshold ? .orange : .accentColor
     }
 }

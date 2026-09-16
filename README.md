@@ -1,4 +1,4 @@
-# 2Ears
+# two.ears
 
 A private talk-share coach for Apple Watch. It measures how much of a conversation you are
 talking, from loudness alone, and taps your wrist when you cross the share you chose.
@@ -8,7 +8,7 @@ This repo holds three things:
 
 - `Sources/TwoEarsCore`: the classifier (level, noise floor, VAD, attribution, talk share).
   Pure Swift, no file or network APIs. Shared by the watch app and the lab harness.
-- `Watch/`: the watchOS app (`Watch/TwoEars.xcodeproj`, target `TwoEarsWatch`).
+- `Watch/`: the watchOS app (`Watch/TwoEars.xcodeproj`, target `TwoEarsWatch`, display name two.ears).
 - `Sources/TwoEarsLab*`: `twoears-lab`, the M0 validation harness described below.
 
 ## Watch app

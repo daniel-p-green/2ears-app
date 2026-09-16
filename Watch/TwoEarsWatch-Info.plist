@@ -7,7 +7,7 @@
 	<key>WKWatchOnly</key>
 	<true/>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>2Ears listens to how loud the room is, not what anyone says. It never records audio.</string>
+	<string>two.ears listens to how loud the room is, not what anyone says. It never records audio.</string>
 	<key>WKBackgroundModes</key>
 	<array>
 		<string>self-care</string>

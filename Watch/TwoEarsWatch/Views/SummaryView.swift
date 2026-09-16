@@ -41,7 +41,7 @@ struct SummaryView: View {
                     session.dismissSummary()
                 }
                 .buttonStyle(.borderedProminent)
-                .tint(summary.intent.tint)
+                .tint(.accentColor)
                 .frame(maxWidth: .infinity)
                 .listRowBackground(Color.clear)
                 .listRowInsets(EdgeInsets())
@@ -49,7 +49,7 @@ struct SummaryView: View {
         }
         .navigationTitle(isLive ? "Summary" : summary.endedAt.formatted(.dateTime.month(.abbreviated).day()))
         .navigationBarBackButtonHidden(isLive)
-        .containerBackground(summary.intent.tint.gradient, for: .navigation)
+        .containerBackground(Color.accentColor.gradient, for: .navigation)
     }
 
     private var hero: some View {
@@ -96,7 +96,7 @@ struct SummaryView: View {
                         .interpolationMethod(.monotone)
                     AreaMark(x: .value("Minute", minute), y: .value("Share", value))
                         .interpolationMethod(.monotone)
-                        .foregroundStyle(summary.intent.tint.opacity(0.15))
+                        .foregroundStyle(Color.accentColor.opacity(0.15))
                 }
             }
             if let threshold = summary.intent.threshold {
@@ -105,7 +105,7 @@ struct SummaryView: View {
                     .foregroundStyle(.secondary)
             }
         }
-        .foregroundStyle(summary.intent.tint)
+        .foregroundStyle(Color.accentColor)
         .chartYScale(domain: 0...1)
         .chartXAxis(.hidden)
         .chartYAxis(.hidden)

@@ -12,18 +12,17 @@ struct StartView: View {
     var body: some View {
         @Bindable var session = session
         List {
-            ForEach(SessionIntent.allCases) { intent in
-                Button {
-                    start(intent)
-                } label: {
-                    IntentCard(intent: intent)
+            Section {
+                ForEach(SessionIntent.allCases) { intent in
+                    Button {
+                        start(intent)
+                    } label: {
+                        IntentCard(intent: intent)
+                    }
+                    .disabled(isStarting)
                 }
-                .buttonStyle(.plain)
-                .disabled(isStarting)
-                .listRowBackground(
-                    RoundedRectangle(cornerRadius: 22, style: .continuous)
-                        .fill(intent.tint.gradient)
-                )
+            } footer: {
+                Text("One tap on the wrist when you pass your share. Nothing is recorded.")
             }
 
             Section {
@@ -41,8 +40,8 @@ struct StartView: View {
                 }
             }
         }
-        .navigationTitle("2Ears")
-        .containerBackground(.blue.gradient, for: .navigation)
+        .navigationTitle("two.ears")
+        .containerBackground(Color.accentColor.gradient, for: .navigation)
         .task {
             try? SessionStore.prune(in: context)
         }
