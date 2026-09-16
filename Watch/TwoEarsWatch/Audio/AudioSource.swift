@@ -9,6 +9,10 @@ enum AudioSourceError: Error {
 protocol AudioSource: AnyObject {
     func start(handler: @escaping @Sendable ([Float]) -> Void) throws
     func stop()
+    /// False while the system has paused delivery (interruption, route change, suspension).
+    var isRunning: Bool { get }
+    /// Restart delivery after the system paused it. No-op when already running.
+    func resume()
 }
 
 enum AudioSources {

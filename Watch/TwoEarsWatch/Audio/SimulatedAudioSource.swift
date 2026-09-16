@@ -4,6 +4,8 @@ import Foundation
 final class SimulatedAudioSource: AudioSource {
     private var task: Task<Void, Never>?
 
+    var isRunning: Bool { task != nil }
+
     func start(handler: @escaping @Sendable ([Float]) -> Void) throws {
         task = Task.detached(priority: .userInitiated) {
             var window = 0
@@ -25,4 +27,6 @@ final class SimulatedAudioSource: AudioSource {
         task?.cancel()
         task = nil
     }
+
+    func resume() {}
 }

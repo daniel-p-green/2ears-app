@@ -2,15 +2,19 @@ import SwiftUI
 
 /// Two vertical pages, like Workout: the ring, then the controls.
 struct ActiveSessionView: View {
+    private enum Page {
+        case ring, controls
+    }
+
     @Environment(SessionManager.self) private var session
-    @State private var page = 0
+    @State private var page = Page.ring
 
     var body: some View {
         TabView(selection: $page) {
             ringPage
-                .tag(0)
+                .tag(Page.ring)
             SessionControlsView()
-                .tag(1)
+                .tag(Page.controls)
         }
         .tabViewStyle(.verticalPage)
         .navigationTitle {

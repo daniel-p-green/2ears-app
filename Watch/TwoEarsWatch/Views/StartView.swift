@@ -1,11 +1,13 @@
+import os
 import SwiftData
 import SwiftUI
 
 struct StartView: View {
+    private static let logger = Logger(subsystem: "com.danielpgreen.twoears", category: "ui")
+
     @Environment(SessionManager.self) private var session
     @Environment(\.modelContext) private var context
     @Query(sort: \SessionRecord.endedAt, order: .reverse) private var records: [SessionRecord]
-    @State private var isStarting = false
 
     private var streak: Int { SessionStore.streak(in: records) }
 
@@ -19,7 +21,7 @@ struct StartView: View {
                     } label: {
                         IntentCard(intent: intent)
                     }
-                    .disabled(isStarting)
+                    .disabled(session.phase == .starting)
                 }
             } footer: {
                 Text("One tap on the wrist when you pass your share. Nothing is recorded.")
@@ -43,20 +45,21 @@ struct StartView: View {
         .navigationTitle("two.ears")
         .containerBackground(Color.accentColor.gradient, for: .navigation)
         .task {
-            try? SessionStore.prune(in: context)
+            do {
+                try SessionStore.prune(in: context)
+            } catch {
+                Self.logger.error("Could not prune history: \(error.localizedDescription)")
+            }
         }
         .alert("Couldn't Start", isPresented: $session.isShowingStartError) {
-            Button("OK", role: .cancel) {}
         } message: {
             Text(session.startError)
         }
     }
 
     private func start(_ intent: SessionIntent) {
-        isStarting = true
         Task {
             await session.start(intent: intent)
-            isStarting = false
         }
     }
 }

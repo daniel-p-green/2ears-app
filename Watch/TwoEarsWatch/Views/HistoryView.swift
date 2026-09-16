@@ -1,7 +1,10 @@
+import os
 import SwiftData
 import SwiftUI
 
 struct HistoryView: View {
+    private static let logger = Logger(subsystem: "com.danielpgreen.twoears", category: "ui")
+
     @Environment(\.modelContext) private var context
     @Query(sort: \SessionRecord.endedAt, order: .reverse) private var records: [SessionRecord]
 
@@ -43,6 +46,10 @@ struct HistoryView: View {
         for index in offsets {
             context.delete(records[index])
         }
-        try? context.save()
+        do {
+            try context.save()
+        } catch {
+            Self.logger.error("Could not delete session: \(error.localizedDescription)")
+        }
     }
 }

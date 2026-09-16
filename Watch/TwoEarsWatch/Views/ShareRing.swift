@@ -12,10 +12,7 @@ struct ShareRing: View {
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    private var value: Double? {
-        if case .value(let v) = share { return v }
-        return nil
-    }
+    private var value: Double? { share.valueOrNil }
 
     var body: some View {
         ZStack {
@@ -28,7 +25,10 @@ struct ShareRing: View {
                     .rotationEffect(.degrees(-90))
             }
             if let threshold {
-                thresholdMark(at: threshold)
+                Circle()
+                    .trim(from: threshold - 0.004, to: threshold + 0.004)
+                    .stroke(.primary.opacity(0.7), style: StrokeStyle(lineWidth: lineWidth + 6, lineCap: .butt))
+                    .rotationEffect(.degrees(-90))
             }
             if showsLabel {
                 label
@@ -51,7 +51,7 @@ struct ShareRing: View {
                     .monospacedDigit()
                     .contentTransition(.numericText())
                     .minimumScaleFactor(0.6)
-                Text("talking")
+                Text(isOverThreshold ? "over target" : "talking")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             } else {
@@ -72,17 +72,7 @@ struct ShareRing: View {
 
     private var accessibilityValue: String {
         guard let value else { return "Not enough evidence yet" }
-        return value.formatted(.percent.precision(.fractionLength(0)))
-    }
-
-    private func thresholdMark(at threshold: Double) -> some View {
-        GeometryReader { geometry in
-            let radius = min(geometry.size.width, geometry.size.height) / 2
-            Capsule()
-                .fill(.primary.opacity(0.7))
-                .frame(width: 3, height: lineWidth + 6)
-                .position(x: geometry.size.width / 2, y: geometry.size.height / 2 - radius)
-                .rotationEffect(.degrees(threshold * 360))
-        }
+        let percent = value.formatted(.percent.precision(.fractionLength(0)))
+        return isOverThreshold ? "\(percent), over your target" : percent
     }
 }

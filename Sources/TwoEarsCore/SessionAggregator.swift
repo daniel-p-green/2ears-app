@@ -3,6 +3,9 @@ import Foundation
 /// Running per-session aggregates over emitted windows. Holds no audio and no per-window history
 /// beyond what the summary needs: counts, the longest wearer stretch, one share sample per minute,
 /// and whether each nudge was followed by a drop in share.
+///
+/// All times are pipeline seconds (derived from window timestamps), not wall-clock time, so a
+/// paused microphone does not read as silence.
 public struct SessionAggregator: Equatable, Sendable {
     /// A nudge counts as followed when share drops by at least this within `followWindowSeconds`.
     public var followedDrop: Double = 0.05
@@ -12,10 +15,13 @@ public struct SessionAggregator: Equatable, Sendable {
 
     public private(set) var totalWindows = 0
     public private(set) var uncertainWindows = 0
-    /// Seconds into the session of the most recent voiced window.
+    /// Pipeline seconds covered so far: the end of the last recorded window.
+    public private(set) var pipelineSeconds: Double = 0
+    /// Pipeline seconds of the most recent voiced window.
     public private(set) var lastVoicedAt: Double = 0
     public private(set) var longestUserStretchSeconds: Double = 0
-    /// One entry per completed minute; nil where the estimator was uncertain at that minute.
+    /// One entry per completed minute (plus the final partial minute after `finish`);
+    /// nil where the estimator was uncertain at that point.
     public private(set) var perMinuteShare: [Double?] = []
     public private(set) var nudgeCount = 0
     public private(set) var nudgesFollowed = 0
@@ -38,6 +44,7 @@ public struct SessionAggregator: Equatable, Sendable {
     public mutating func record(_ windows: [WindowStat], config: ClassifierConfig) {
         for window in windows {
             totalWindows += 1
+            pipelineSeconds = max(pipelineSeconds, Double(window.startMs + config.windowMs) / 1000)
             if window.voiced {
                 lastVoicedAt = Double(window.startMs) / 1000
             }
@@ -76,9 +83,16 @@ public struct SessionAggregator: Equatable, Sendable {
         resolveFollowChecks(upTo: elapsed, share: share)
     }
 
-    /// Call at end of session. Judges every outstanding nudge against the final share.
-    public mutating func finish(share: TalkShare) {
-        resolveFollowChecks(upTo: .infinity, share: share)
+    /// Call at end of session. Samples the final partial minute and judges nudges that had at least
+    /// half their follow window to play out; more recent ones are left unjudged rather than scored
+    /// against a window that never happened.
+    public mutating func finish(elapsed: Double, share: TalkShare) {
+        tick(elapsed: elapsed, share: share)
+        if Double(perMinuteShare.count) * 60 < elapsed {
+            perMinuteShare.append(share.valueOrNil)
+        }
+        resolveFollowChecks(upTo: elapsed + followWindowSeconds / 2, share: share)
+        pendingFollowChecks.removeAll()
     }
 
     private mutating func resolveFollowChecks(upTo time: Double, share: TalkShare) {

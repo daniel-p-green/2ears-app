@@ -8,9 +8,15 @@ struct StartListeningIntent: AppIntent {
     static let openAppWhenRun = true
 
     @MainActor
-    func perform() async throws -> some IntentResult {
-        await SessionManager.shared.start(intent: .listen)
-        return .result()
+    func perform() async throws -> some IntentResult & ProvidesDialog {
+        switch SessionManager.shared.requestStart(intent: .listen) {
+        case .started, .queuedUntilActive:
+            return .result(dialog: "Listening.")
+        case .alreadyActive:
+            return .result(dialog: "Already listening.")
+        case .summaryPending:
+            return .result(dialog: "Finish the summary first.")
+        }
     }
 }
 

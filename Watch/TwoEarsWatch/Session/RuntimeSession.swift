@@ -1,11 +1,16 @@
 import Foundation
 import WatchKit
 
-/// Keeps the app alive with the wrist down. Needs a WKBackgroundModes entry in Info.plist.
+/// Keeps the app alive with the wrist down. The session type comes from WKBackgroundModes in
+/// Info.plist; `mindfulness` is frontmost with a one-hour limit, so the owner renews it on expiry.
 @MainActor
 final class RuntimeSession: NSObject, WKExtendedRuntimeSessionDelegate {
     private var session: WKExtendedRuntimeSession?
-    var onExpire: (@MainActor () -> Void)?
+    var onWillExpire: (@MainActor () -> Void)?
+    var onInvalidate: (@MainActor (WKExtendedRuntimeSessionInvalidationReason, Error?) -> Void)?
+
+    var isRunning: Bool { session?.state == .running }
+    var expirationDate: Date? { session?.expirationDate }
 
     func start() {
         let session = WKExtendedRuntimeSession()
@@ -15,26 +20,27 @@ final class RuntimeSession: NSObject, WKExtendedRuntimeSessionDelegate {
     }
 
     func stop() {
-        if let session, session.state == .running {
-            session.invalidate()
-        }
+        let ending = session
         session = nil
+        if let ending, ending.state == .running || ending.state == .scheduled {
+            ending.invalidate()
+        }
     }
 
     nonisolated func extendedRuntimeSessionDidStart(_ extendedRuntimeSession: WKExtendedRuntimeSession) {}
 
-    nonisolated func extendedRuntimeSessionWillExpire(_ extendedRuntimeSession: WKExtendedRuntimeSession) {}
+    nonisolated func extendedRuntimeSessionWillExpire(_ extendedRuntimeSession: WKExtendedRuntimeSession) {
+        Task { @MainActor in onWillExpire?() }
+    }
 
     nonisolated func extendedRuntimeSession(_ extendedRuntimeSession: WKExtendedRuntimeSession,
                                             didInvalidateWith reason: WKExtendedRuntimeSessionInvalidationReason,
                                             error: Error?) {
+        let invalidated = ObjectIdentifier(extendedRuntimeSession)
         Task { @MainActor in
-            session = nil
-            // Foreground use keeps working without a runtime session (the simulator has none),
-            // so only an expiry ends the conversation.
-            if reason == .expired {
-                onExpire?()
-            }
+            guard let session, ObjectIdentifier(session) == invalidated else { return }
+            self.session = nil
+            onInvalidate?(reason, error)
         }
     }
 }

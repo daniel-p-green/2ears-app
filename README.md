@@ -34,9 +34,15 @@ The nudge state machine (`NudgeController`) and the summary aggregates (`Session
 live in `TwoEarsCore` and are covered by `swift test`; the watch target only wires them to
 audio, haptics, and SwiftUI. The watch target builds in Swift 6 language mode.
 
-Unresolved from the spec and still open here: the extended-runtime session type is
-`self-care` in `Watch/TwoEarsWatch-Info.plist` pending App Review guidance, and there is no
-complication yet.
+The extended-runtime session type is `mindfulness` in `Watch/TwoEarsWatch-Info.plist`: it is
+the only frontmost type with a one-hour limit (self-care is ten minutes). The app renews the
+session when it expires or when you return after leaving the app, so longer conversations
+keep going as long as you come back to the app; the session clock is pipeline time, so time
+away or on a call never reads as silence. Whether App Review accepts `mindfulness` for a
+listening coach is still the open question from the spec. There is no complication yet.
+
+First things to test on a physical watch: that the microphone keeps delivering with the wrist
+down for the whole runtime window, and that haptics fire with the screen off.
 
 ## M0 validation harness
 

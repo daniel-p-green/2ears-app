@@ -1,14 +1,13 @@
-import SwiftData
 import SwiftUI
 
 struct RootView: View {
     @Environment(SessionManager.self) private var session
-    @Environment(\.modelContext) private var context
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         NavigationStack {
             switch session.phase {
-            case .idle:
+            case .idle, .starting:
                 StartView()
             case .active:
                 ActiveSessionView()
@@ -18,9 +17,10 @@ struct RootView: View {
                 }
             }
         }
-        .onChange(of: session.lastSummary?.id) { _, id in
-            guard id != nil, let summary = session.lastSummary else { return }
-            try? SessionStore.save(summary, in: context)
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active {
+                session.appBecameActive()
+            }
         }
     }
 }

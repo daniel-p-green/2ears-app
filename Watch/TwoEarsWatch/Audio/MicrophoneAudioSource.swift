@@ -1,14 +1,20 @@
 import AVFAudio
 import Foundation
+import os
 
 /// Live wrist microphone through AVAudioEngine, converted to 16 kHz mono in memory.
 /// Buffers are consumed and released; nothing is written anywhere.
-/// Suspends for phone calls and other audio interruptions and resumes afterwards.
+/// Pauses for phone calls and other interruptions, and can be resumed after any system stop.
 final class MicrophoneAudioSource: AudioSource {
+    private static let logger = Logger(subsystem: "com.danielpgreen.twoears", category: "audio")
+
     private let engine = AVAudioEngine()
     private let targetFormat = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: 16000,
                                              channels: 1, interleaved: false)!
-    private var interruptionObserver: NSObjectProtocol?
+    private var observers: [NSObjectProtocol] = []
+    private var isStarted = false
+
+    var isRunning: Bool { isStarted && engine.isRunning }
 
     func start(handler: @escaping @Sendable ([Float]) -> Void) throws {
         let audioSession = AVAudioSession.sharedInstance()
@@ -42,8 +48,10 @@ final class MicrophoneAudioSource: AudioSource {
         }
         engine.prepare()
         try engine.start()
+        isStarted = true
 
-        interruptionObserver = NotificationCenter.default.addObserver(
+        let center = NotificationCenter.default
+        observers.append(center.addObserver(
             forName: AVAudioSession.interruptionNotification, object: audioSession, queue: .main
         ) { [weak self] note in
             let typeRaw = note.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt
@@ -51,17 +59,33 @@ final class MicrophoneAudioSource: AudioSource {
             MainActor.assumeIsolated {
                 self?.handleInterruption(typeRaw: typeRaw, optionsRaw: optionsRaw)
             }
-        }
+        })
+        observers.append(center.addObserver(
+            forName: .AVAudioEngineConfigurationChange, object: engine, queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated { self?.resume() }
+        })
     }
 
     func stop() {
-        if let interruptionObserver {
-            NotificationCenter.default.removeObserver(interruptionObserver)
+        isStarted = false
+        for observer in observers {
+            NotificationCenter.default.removeObserver(observer)
         }
-        interruptionObserver = nil
+        observers.removeAll()
         engine.inputNode.removeTap(onBus: 0)
         engine.stop()
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+    }
+
+    func resume() {
+        guard isStarted, !engine.isRunning else { return }
+        do {
+            try AVAudioSession.sharedInstance().setActive(true)
+            try engine.start()
+        } catch {
+            Self.logger.error("Could not resume the microphone: \(error.localizedDescription)")
+        }
     }
 
     private func handleInterruption(typeRaw: UInt?, optionsRaw: UInt?) {
@@ -72,8 +96,7 @@ final class MicrophoneAudioSource: AudioSource {
         case .ended:
             let options = optionsRaw.map(AVAudioSession.InterruptionOptions.init(rawValue:)) ?? []
             if options.contains(.shouldResume) {
-                try? AVAudioSession.sharedInstance().setActive(true)
-                try? engine.start()
+                resume()
             }
         @unknown default:
             break

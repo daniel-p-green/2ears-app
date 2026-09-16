@@ -7,18 +7,13 @@ struct SessionControlsView: View {
     var body: some View {
         VStack(spacing: 14) {
             VStack(spacing: 6) {
-                Button {
-                    session.end(reason: .manual)
-                } label: {
-                    Image(systemName: "xmark")
-                        .font(.title2.weight(.bold))
-                        .frame(width: 30, height: 30)
-                }
-                .buttonStyle(.bordered)
-                .buttonBorderShape(.circle)
-                .controlSize(.large)
-                .tint(.red)
-                .accessibilityLabel("End session")
+                Button("End", systemImage: "xmark", action: endSession)
+                    .labelStyle(.iconOnly)
+                    .font(.title2.weight(.bold))
+                    .buttonStyle(.bordered)
+                    .buttonBorderShape(.circle)
+                    .controlSize(.large)
+                    .tint(.red)
                 Text("End")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
@@ -39,5 +34,9 @@ struct SessionControlsView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private func endSession() {
+        session.end(reason: .manual)
     }
 }

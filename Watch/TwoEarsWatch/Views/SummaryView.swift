@@ -90,7 +90,7 @@ struct SummaryView: View {
 
     private var sparkline: some View {
         Chart {
-            ForEach(Array(summary.perMinuteShare.enumerated()), id: \.offset) { minute, value in
+            ForEach(summary.perMinuteShare.enumerated(), id: \.offset) { minute, value in
                 if let value {
                     LineMark(x: .value("Minute", minute), y: .value("Share", value))
                         .interpolationMethod(.monotone)
