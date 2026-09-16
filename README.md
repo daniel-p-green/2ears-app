@@ -43,6 +43,19 @@ The nudge state machine (`NudgeController`) and the summary aggregates (`Session
 live in `TwoEarsCore` and are covered by `swift test`; the watch target only wires them to
 audio, haptics, and SwiftUI. The watch target builds in Swift 6 language mode.
 
+**Complication.** The `TwoEarsComplication` WidgetKit extension (embedded in the app) offers a
+Start Listening complication in the circular, corner, rectangular, and inline families. Tapping it
+opens the app through the `twoears://start` URL scheme straight into a Listen session. Verified on
+the watchOS 27 simulator on the Activity Analog face. Note that `xcrun simctl openurl` cannot
+exercise this path on watchOS; add the complication to a face and tap it.
+
+**Launch video.** `videos/two-ears-launch/` is a HyperFrames project: `BRIEF.md`, `STORYBOARD.md`,
+`SCRIPT.md`, seven frame compositions, staged fonts, and local Kokoro narration. Render with
+`npx hyperframes render --quality high --output renders/video.mp4` from that folder (renders are
+gitignored). The delivered cut is 39 seconds, 1080x1080, narrated and captioned, with no music
+because no music provider was signed in; `npx hyperframes auth login` and a re-run of the audio
+step add a HeyGen bed and voice.
+
 The extended-runtime session type is `mindfulness` in `Watch/TwoEarsWatch-Info.plist`: it is
 the only frontmost type with a one-hour limit (self-care is ten minutes). The app renews the
 session when it expires or when you return after leaving the app, so longer conversations
