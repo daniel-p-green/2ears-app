@@ -1,6 +1,7 @@
 .build/
 .swiftpm/
 sessions/
-*.xcodeproj
 xcuserdata/
+*.xcuserstate
+DerivedData/
 .DS_Store

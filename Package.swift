@@ -3,7 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "TwoEars",
-    platforms: [.macOS(.v14)],
+    platforms: [.macOS(.v14), .watchOS(.v10), .iOS(.v17)],
     products: [
         .library(name: "TwoEarsCore", targets: ["TwoEarsCore"]),
         .library(name: "TwoEarsLabKit", targets: ["TwoEarsLabKit"]),

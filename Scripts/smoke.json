@@ -1,0 +1,9 @@
+{
+  "name": "smoke",
+  "blocks": [
+    { "label": "silence", "seconds": 2 },
+    { "label": "you", "seconds": 4 },
+    { "label": "partner", "seconds": 4 },
+    { "label": "silence", "seconds": 2 }
+  ]
+}

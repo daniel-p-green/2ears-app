@@ -6,6 +6,6 @@ struct Lab: ParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "twoears-lab",
         abstract: "2Ears M0 validation harness: record labeled samples and grade the loudness classifier.",
-        subcommands: []
+        subcommands: [DevicesCommand.self, RecordCommand.self, AnalyzeCommand.self, ReportCommand.self]
     )
 }
