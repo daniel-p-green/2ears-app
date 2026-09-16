@@ -25,11 +25,18 @@ the trailing two minutes, orange once you cross the threshold, elapsed time, End
 course-corrected), History (30-day retention, swipe to delete).
 
 The simulator has no microphone, so on the simulator the app plays a scripted four-minute
-conversation through the real classifier. On a device it uses the wrist microphone.
+conversation through the real classifier. On a device it uses the wrist microphone, suspends
+for phone calls and resumes after, warns on the controls page at 20% battery, and ends the
+session at 5%. "Start listening with two.ears" is a Siri phrase (App Intent) that opens a
+Listen session.
+
+The nudge state machine (`NudgeController`) and the summary aggregates (`SessionAggregator`)
+live in `TwoEarsCore` and are covered by `swift test`; the watch target only wires them to
+audio, haptics, and SwiftUI. The watch target builds in Swift 6 language mode.
 
 Unresolved from the spec and still open here: the extended-runtime session type is
 `self-care` in `Watch/TwoEarsWatch-Info.plist` pending App Review guidance, and there is no
-complication or Siri intent yet.
+complication yet.
 
 ## M0 validation harness
 
