@@ -22,5 +22,11 @@ struct RootView: View {
                 session.appBecameActive()
             }
         }
+        .onOpenURL { url in
+            // twoears://start from the complication.
+            if url.scheme == "twoears", url.host() == "start" {
+                _ = session.requestStart(intent: .listen)
+            }
+        }
     }
 }

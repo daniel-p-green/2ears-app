@@ -12,5 +12,16 @@
 	<array>
 		<string>mindfulness</string>
 	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.danielpgreen.twoears</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>twoears</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>
