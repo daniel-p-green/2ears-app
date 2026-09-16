@@ -1,5 +1,6 @@
 import Charts
 import SwiftUI
+import TwoEarsCore
 
 struct SummaryView: View {
     var summary: SessionSummaryData
@@ -11,27 +12,8 @@ struct SummaryView: View {
     var body: some View {
         List {
             Section {
-                VStack(alignment: .leading, spacing: 4) {
-                    if let share = summary.talkShare {
-                        Text(share, format: .percent.precision(.fractionLength(0)))
-                            .font(.system(.largeTitle, design: .rounded, weight: .semibold))
-                            .monospacedDigit()
-                        Text("of the conversation")
-                            .foregroundStyle(.secondary)
-                    } else {
-                        Text("Not enough to tell")
-                            .font(.headline)
-                        Text("The room was too noisy or too quiet to attribute.")
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                    }
-                    if let threshold = summary.intent.threshold {
-                        Label(targetText(threshold), systemImage: summary.metTarget == true ? "checkmark.circle.fill" : "circle")
-                            .font(.footnote)
-                            .foregroundStyle(summary.metTarget == true ? .green : .secondary)
-                    }
-                }
-                .padding(.vertical, 4)
+                hero
+                    .padding(.vertical, 6)
             }
 
             if summary.perMinuteShare.contains(where: { $0 != nil }) {
@@ -50,28 +32,60 @@ struct SummaryView: View {
                 }
                 LabeledContent("Uncertain", value: summary.uncertainFraction.formatted(.percent.precision(.fractionLength(0))))
                 LabeledContent("Length", value: durationText(summary.duration))
-            }
-
-            Section {
+            } footer: {
                 Text(summary.endReason.title)
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
             }
 
             if isLive {
-                Section {
-                    Button("Done") {
-                        session.dismissSummary()
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .frame(maxWidth: .infinity)
-                    .listRowBackground(Color.clear)
-                    .listRowInsets(EdgeInsets())
+                Button("Done") {
+                    session.dismissSummary()
                 }
+                .buttonStyle(.borderedProminent)
+                .tint(summary.intent.tint)
+                .frame(maxWidth: .infinity)
+                .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets())
             }
         }
         .navigationTitle(isLive ? "Summary" : summary.endedAt.formatted(.dateTime.month(.abbreviated).day()))
         .navigationBarBackButtonHidden(isLive)
+        .containerBackground(summary.intent.tint.gradient, for: .navigation)
+    }
+
+    private var hero: some View {
+        HStack(spacing: 12) {
+            ShareRing(share: summary.talkShare.map { .value($0) } ?? .uncertain,
+                      threshold: summary.intent.threshold,
+                      isOverThreshold: summary.metTarget == false,
+                      lineWidth: 8,
+                      showsLabel: false)
+                .frame(width: 58, height: 58)
+            VStack(alignment: .leading, spacing: 2) {
+                if let share = summary.talkShare {
+                    Text(share, format: .percent.precision(.fractionLength(0)))
+                        .font(.system(.title, design: .rounded, weight: .bold))
+                        .monospacedDigit()
+                    Text("talking")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                } else {
+                    Text("Unclear")
+                        .font(.system(.title3, design: .rounded, weight: .bold))
+                    Text("Too noisy to attribute")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+                if let threshold = summary.intent.threshold {
+                    Label(targetText(threshold),
+                          systemImage: summary.metTarget == true ? "checkmark.circle.fill" : "circle.dashed")
+                        .font(.caption2)
+                        .foregroundStyle(summary.metTarget == true ? .green : .secondary)
+                        .padding(.top, 2)
+                }
+            }
+            .lineLimit(1)
+            .minimumScaleFactor(0.8)
+        }
     }
 
     private var sparkline: some View {
@@ -82,7 +96,7 @@ struct SummaryView: View {
                         .interpolationMethod(.monotone)
                     AreaMark(x: .value("Minute", minute), y: .value("Share", value))
                         .interpolationMethod(.monotone)
-                        .foregroundStyle(.blue.opacity(0.15))
+                        .foregroundStyle(summary.intent.tint.opacity(0.15))
                 }
             }
             if let threshold = summary.intent.threshold {
@@ -91,6 +105,7 @@ struct SummaryView: View {
                     .foregroundStyle(.secondary)
             }
         }
+        .foregroundStyle(summary.intent.tint)
         .chartYScale(domain: 0...1)
         .chartXAxis(.hidden)
         .chartYAxis(.hidden)
@@ -99,7 +114,7 @@ struct SummaryView: View {
 
     private func targetText(_ threshold: Double) -> String {
         let target = threshold.formatted(.percent.precision(.fractionLength(0)))
-        return summary.metTarget == true ? "Under your \(target) target" : "Target was under \(target)"
+        return summary.metTarget == true ? "Under \(target) target" : "Target under \(target)"
     }
 
     private func durationText(_ seconds: TimeInterval) -> String {

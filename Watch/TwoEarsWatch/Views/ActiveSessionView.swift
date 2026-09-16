@@ -1,30 +1,40 @@
 import SwiftUI
 
+/// Two vertical pages, like Workout: the ring, then the controls.
 struct ActiveSessionView: View {
     @Environment(SessionManager.self) private var session
+    @State private var page = 0
 
     var body: some View {
-        VStack(spacing: 6) {
-            ShareRing(share: session.share,
-                      threshold: session.intent.threshold,
-                      isOverThreshold: session.isOverThreshold)
-                .frame(maxHeight: 130)
+        TabView(selection: $page) {
+            ringPage
+                .tag(0)
+            SessionControlsView()
+                .tag(1)
+        }
+        .tabViewStyle(.verticalPage)
+        .navigationTitle {
             if let startedAt = session.startedAt {
                 Text(startedAt, style: .timer)
-                    .font(.footnote.monospacedDigit())
-                    .foregroundStyle(.secondary)
+                    .monospacedDigit()
+                    .foregroundStyle(.primary)
             }
         }
-        .padding(.horizontal)
-        .navigationTitle(session.intent.title)
         .navigationBarBackButtonHidden()
-        .toolbar {
-            ToolbarItem(placement: .bottomBar) {
-                Button("End", systemImage: "stop.fill", role: .destructive) {
-                    session.end(reason: .manual)
-                }
-                .tint(.red)
-            }
-        }
+        .containerBackground(glow.gradient, for: .navigation)
+    }
+
+    private var ringPage: some View {
+        ShareRing(share: session.share,
+                  threshold: session.intent.threshold,
+                  isOverThreshold: session.isOverThreshold,
+                  lineWidth: 14)
+            .padding(.horizontal, 6)
+            .padding(.bottom, 4)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private var glow: Color {
+        session.isOverThreshold ? .orange : session.intent.tint
     }
 }

@@ -1,4 +1,4 @@
-import Foundation
+import SwiftUI
 
 /// What the wearer is trying to do in this room. Sets the nudge threshold.
 enum SessionIntent: String, CaseIterable, Identifiable, Codable, Sendable {
@@ -19,6 +19,23 @@ enum SessionIntent: String, CaseIterable, Identifiable, Codable, Sendable {
         case .listen: "One tap when you pass 40% of the conversation."
         case .balanced: "One tap when you pass 55% of the conversation."
         case .presenting: "No taps. You're supposed to be talking."
+        }
+    }
+
+    /// Short line for the start card.
+    var cardDetail: String {
+        switch self {
+        case .listen: "Tap past 40%"
+        case .balanced: "Tap past 55%"
+        case .presenting: "Stats only, no taps"
+        }
+    }
+
+    var tint: Color {
+        switch self {
+        case .listen: .blue
+        case .balanced: .teal
+        case .presenting: .indigo
         }
     }
 

@@ -5,44 +5,25 @@ struct StartView: View {
     @Environment(SessionManager.self) private var session
     @Environment(\.modelContext) private var context
     @Query(sort: \SessionRecord.endedAt, order: .reverse) private var records: [SessionRecord]
-    @AppStorage("intent") private var intentRawValue = SessionIntent.listen.rawValue
     @State private var isStarting = false
-
-    private var intent: SessionIntent {
-        get { SessionIntent(rawValue: intentRawValue) ?? .listen }
-        nonmutating set { intentRawValue = newValue.rawValue }
-    }
 
     private var streak: Int { SessionStore.streak(in: records) }
 
     var body: some View {
         @Bindable var session = session
         List {
-            Section {
+            ForEach(SessionIntent.allCases) { intent in
                 Button {
-                    start()
+                    start(intent)
                 } label: {
-                    Label("Start Listening", systemImage: "ear")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity, minHeight: 44)
+                    IntentCard(intent: intent)
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(.blue)
+                .buttonStyle(.plain)
                 .disabled(isStarting)
-                .listRowBackground(Color.clear)
-                .listRowInsets(EdgeInsets())
-            }
-
-            Section {
-                Picker("Intent", selection: Binding(get: { intent }, set: { intent = $0 })) {
-                    ForEach(SessionIntent.allCases) { intent in
-                        Label(intent.title, systemImage: intent.symbolName)
-                            .tag(intent)
-                    }
-                }
-                .pickerStyle(.navigationLink)
-            } footer: {
-                Text(intent.detail)
+                .listRowBackground(
+                    RoundedRectangle(cornerRadius: 22, style: .continuous)
+                        .fill(intent.tint.gradient)
+                )
             }
 
             Section {
@@ -53,18 +34,15 @@ struct StartView: View {
                         Text(records.count, format: .number)
                     }
                 }
+            } footer: {
                 if streak > 0 {
-                    Label {
-                        Text("^[\(streak) room](inflect: true) where you listened well")
-                    } icon: {
-                        Image(systemName: "checkmark.seal.fill")
-                            .foregroundStyle(.green)
-                    }
-                    .font(.footnote)
+                    Label("^[\(streak) room](inflect: true) listened well", systemImage: "checkmark.seal.fill")
+                        .foregroundStyle(.secondary)
                 }
             }
         }
         .navigationTitle("2Ears")
+        .containerBackground(.blue.gradient, for: .navigation)
         .task {
             try? SessionStore.prune(in: context)
         }
@@ -78,11 +56,10 @@ struct StartView: View {
         }
     }
 
-    private func start() {
+    private func start(_ intent: SessionIntent) {
         isStarting = true
-        let chosen = intent
         Task {
-            await session.start(intent: chosen)
+            await session.start(intent: intent)
             isStarting = false
         }
     }
