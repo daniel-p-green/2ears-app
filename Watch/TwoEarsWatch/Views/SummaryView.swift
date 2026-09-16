@@ -114,7 +114,7 @@ struct SummaryView: View {
 
     private func targetText(_ threshold: Double) -> String {
         let target = threshold.formatted(.percent.precision(.fractionLength(0)))
-        return summary.metTarget == true ? "Under \(target) target" : "Target under \(target)"
+        return summary.metTarget == true ? "Under \(target)" : "Over \(target)"
     }
 
     private func durationText(_ seconds: TimeInterval) -> String {
