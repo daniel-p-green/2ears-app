@@ -27,6 +27,7 @@ struct StartView: View {
                         .frame(maxWidth: .infinity, minHeight: 44)
                 }
                 .buttonStyle(.borderedProminent)
+                .tint(.blue)
                 .disabled(isStarting)
                 .listRowBackground(Color.clear)
                 .listRowInsets(EdgeInsets())
