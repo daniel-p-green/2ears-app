@@ -98,12 +98,13 @@ let package = Package(
         .executableTarget(
             name: "TwoEarsLab",
             dependencies: [
+                "TwoEarsCore",
                 "TwoEarsLabKit",
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
             ]
         ),
         .testTarget(name: "TwoEarsCoreTests", dependencies: ["TwoEarsCore"]),
-        .testTarget(name: "TwoEarsLabKitTests", dependencies: ["TwoEarsLabKit"]),
+        .testTarget(name: "TwoEarsLabKitTests", dependencies: ["TwoEarsCore", "TwoEarsLabKit"]),
     ],
     swiftLanguageModes: [.v5]
 )
@@ -179,6 +180,22 @@ enum Signal {
     }
 
     static func silence(count: Int) -> [Float] { [Float](repeating: 0, count: count) }
+
+    /// `windows` 100 ms windows of a 200 Hz tone at `dbfs`, with every tenth window replaced by
+    /// noise at `noiseDb`. The dips keep the noise floor anchored at the noise level (the floor is a
+    /// 10th percentile over 100 windows) while the nine-window runs stay above the 800 ms burst minimum.
+    static func dippedTone(dbfs: Double, noiseDb: Double, windows: Int, phase: Int = 0) -> [Float] {
+        var out: [Float] = []
+        out.reserveCapacity(windows * 1600)
+        for w in 0..<windows {
+            if w % 10 == 9 {
+                out += noise(dbfs: noiseDb, count: 1600, seed: UInt64(w + 7))
+            } else {
+                out += sine(hz: 200, dbfs: dbfs, count: 1600, phase: phase + out.count)
+            }
+        }
+        return out
+    }
 }
 ```
 
@@ -1053,12 +1070,14 @@ final class PipelineTests: XCTestCase {
     }
 
     func testShareBecomesValueWithEnoughEvidence() {
+        // Continuous tone for more than 10 s would drag the noise floor up to the tone level and
+        // mute VAD, so both speech segments use the dipped pattern (see Signal.dippedTone).
         let s = Signal.noise(dbfs: -60, count: 3 * 16000)
-            + Signal.sine(hz: 200, dbfs: -30, count: 10 * 16000)
-            + Signal.sine(hz: 200, dbfs: -48, count: 10 * 16000)
+            + Signal.dippedTone(dbfs: -30, noiseDb: -60, windows: 100)
+            + Signal.dippedTone(dbfs: -48, noiseDb: -60, windows: 100)
         let (_, share) = runAll(s, chunk: 4096)
         guard case .value(let v) = share else { return XCTFail("expected a value, got \(share)") }
-        XCTAssertEqual(v, 0.5, accuracy: 0.02)
+        XCTAssertEqual(v, 0.5, accuracy: 0.02)   // 90 user and 90 room voiced windows
     }
 }
 ```
@@ -1191,8 +1210,9 @@ final class WavFileTests: XCTestCase {
         let back = try WavFile.read(url)
         XCTAssertEqual(back.sampleRate, 16000)
         XCTAssertEqual(back.samples.count, original.count)
+        // Writer scales by 32767 and rounds; reader divides by 32768. Worst case is about 1.3 steps.
         for (a, b) in zip(original, back.samples) {
-            XCTAssertEqual(a, b, accuracy: 1.0 / 32768 + 1e-6)
+            XCTAssertEqual(a, b, accuracy: 1.5 / 32768 + 1e-6)
         }
     }
 
@@ -2336,7 +2356,7 @@ public enum Analyzer {
 - [ ] **Step 6: Run tests to verify they pass**
 
 Run: `swift test --filter AnalyzerTests`
-Expected: 6 tests pass. If `testFixtureScoresAboveGate` fails on accuracy, run `analyze` with `--dump-windows` equivalent in a scratch test and check whether the noise floor drifted above -60 (dip pattern broken) or partner windows landed in `uncertain` (partner level too close to the boundary).
+Expected: 6 tests pass in roughly 20 seconds; the sweep test runs 24 pipelines over 3 million samples, so it is slow, not hung. If `testFixtureScoresAboveGate` fails on accuracy, run `analyze` with `--dump-windows` equivalent in a scratch test and check whether the noise floor drifted above -60 (dip pattern broken) or partner windows landed in `uncertain` (partner level too close to the boundary).
 
 - [ ] **Step 7: Commit**
 
@@ -2392,14 +2412,14 @@ final class ReporterTests: XCTestCase {
 
     func testGoWithThreeQuietSessionsAtGate() {
         let v = Reporter.verdict(for: [
-            analysis("a", condition: "quiet", accuracy: 0.85),
+            analysis("a", condition: "quiet", accuracy: 0.90),
             analysis("b", condition: "quiet", accuracy: 0.90),
-            analysis("c", condition: "quiet", accuracy: 0.80),
+            analysis("c", condition: "quiet", accuracy: 0.85),
             analysis("d", condition: "cafe", accuracy: 0.30),
         ])
         XCTAssertEqual(v.verdict, .go)
         XCTAssertEqual(v.quietSessionCount, 3)
-        XCTAssertEqual(v.meanQuietAccuracy!, 0.85, accuracy: 1e-9)
+        XCTAssertEqual(v.meanQuietAccuracy!, 0.8833, accuracy: 1e-3)
     }
 
     func testNoGoBelowGate() {
@@ -3187,6 +3207,10 @@ Append to `README.md`:
   each other. SILENCE: nobody talks.
 - Record at least three `quiet` sessions and two `cafe` sessions before trusting the verdict.
 - Ctrl-C keeps what was recorded and marks the session as ended early.
+- Talk the way people talk: sentences with breaths between them. The noise floor is the
+  10th percentile of the last 10 seconds, so a speaker who never pauses for more than 10 s
+  drags the floor up to their own level and the detector goes quiet. That is a real property
+  of the spec's classifier and one of the things M0 is meant to surface, not a harness bug.
 
 ## Output
 

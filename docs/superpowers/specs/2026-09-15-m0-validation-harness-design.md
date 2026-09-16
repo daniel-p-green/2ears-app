@@ -52,7 +52,7 @@ The harness is a lab tool, not the product. It stores audio on disk so results c
   README.md
 ```
 
-Dependencies: `swift-argument-parser` only. AVFoundation is used from `TwoEarsLabKit` for capture and WAV I/O. `TwoEarsLab` contains no logic beyond argument parsing so every behavior is covered by library tests.
+Dependencies: `swift-argument-parser` only. AVFoundation and CoreAudio are used from `TwoEarsLabKit` for capture only; WAV reading and writing is a small PCM16 implementation of our own so tests and the fixture generator never touch AVFoundation. `TwoEarsLab` contains no logic beyond argument parsing so every behavior is covered by library tests.
 
 ## Classifier library (TwoEarsCore)
 
