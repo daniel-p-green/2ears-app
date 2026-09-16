@@ -43,7 +43,7 @@ struct StartView: View {
             }
         }
         .navigationTitle("two.ears")
-        .containerBackground(Color.accentColor.gradient, for: .navigation)
+        .containerBackground(Theme.glow.gradient, for: .navigation)
         .task {
             do {
                 try SessionStore.prune(in: context)

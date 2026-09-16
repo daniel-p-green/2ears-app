@@ -39,6 +39,6 @@ struct ActiveSessionView: View {
     }
 
     private var glow: Color {
-        session.isOverThreshold ? .orange : .accentColor
+        session.isOverThreshold ? Theme.over : Theme.glow
     }
 }

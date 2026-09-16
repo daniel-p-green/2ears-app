@@ -1,4 +1,5 @@
 import Foundation
+import TwoEarsCore
 
 enum SessionEndReason: String, Codable, Sendable {
     case manual, autoSilence, battery, interruption
@@ -32,6 +33,13 @@ struct SessionSummaryData: Identifiable, Equatable, Sendable {
     var endReason: SessionEndReason
 
     var duration: TimeInterval { endedAt.timeIntervalSince(startedAt) }
+
+    /// The Listening Score, or nil for Presenting sessions and sessions without a share estimate.
+    var score: ListeningScore? {
+        ListeningScore.compute(talkShare: talkShare, targetShare: intent.threshold,
+                               longestStretchSeconds: longestUserStretch,
+                               nudgeCount: nudgeCount, nudgesJudged: nudgesJudged, nudgesFollowed: nudgesFollowed)
+    }
 
     /// True when the session finished inside the intent's target band.
     var metTarget: Bool? {

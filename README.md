@@ -21,8 +21,17 @@ From the command line:
 
 Screens: Start (intent picker, history, streak), Live (a single ring showing your share of
 the trailing two minutes, orange once you cross the threshold, elapsed time, End), Summary
-(share against target, sparkline per minute, longest stretch, nudges and whether you
-course-corrected), History (30-day retention, swipe to delete).
+(Listening Score with its breakdown, share against target, sparkline per minute, longest
+stretch, nudges and whether you course-corrected), History (30-day retention, swipe to delete).
+
+The Listening Score is a 0 to 100 rating in the Sleep Score idiom, computed in `TwoEarsCore`
+(`ListeningScore`) from the summary alone: 60 points for staying at or under your target
+share, fading to zero 35 points past it; 20 points for keeping your longest uninterrupted
+stretch under a minute, fading to zero at three minutes; 20 points for course-correcting
+after nudges, with full credit when no nudge was needed. Bands: Excellent 90+, Good 75+,
+OK 60+, Low 40+, Very Low below. Presenting sessions and sessions without a share estimate
+are not scored. Colors are system colors throughout: cyan accent, deep blue navigation glow,
+orange only when over the threshold, and Sleep's green, yellow, orange, and red for bands.
 
 The simulator has no microphone, so on the simulator the app plays a scripted four-minute
 conversation through the real classifier. On a device it uses the wrist microphone, suspends
