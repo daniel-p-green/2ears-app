@@ -1,0 +1,456 @@
+<template>
+  <!--
+    06-listening-score — Listening Score gauge inside the drawn watch.
+    Duration 4.907s. The packet's Scene windows (0–2.4 / 2.4–4.2 / 4.2–6.0) are scaled
+    to the fixed duration: Scene 1 0.0–1.96s · Scene 2 1.96–3.44s · Scene 3 3.44–4.907s.
+    Ids / classes are prefixed with the letter-led form of the frame id ("f06-listening-score-")
+    so they stay valid CSS/querySelector tokens (a leading digit would need escaping).
+  -->
+  <style>
+    @font-face {
+      font-family: "Space Grotesk";
+      font-weight: 500;
+      font-style: normal;
+      src: url("assets/fonts/Space_Grotesk_500.woff2") format("woff2");
+    }
+    @font-face {
+      font-family: "Space Grotesk";
+      font-weight: 600;
+      font-style: normal;
+      src: url("assets/fonts/Space_Grotesk_600.woff2") format("woff2");
+    }
+    @font-face {
+      font-family: "Space Grotesk";
+      font-weight: 700;
+      font-style: normal;
+      src: url("assets/fonts/Space_Grotesk_700.woff2") format("woff2");
+    }
+    @font-face {
+      font-family: "Inter";
+      font-weight: 400;
+      font-style: normal;
+      src: url("assets/fonts/Inter_400.woff2") format("woff2");
+    }
+    @font-face {
+      font-family: "Inter";
+      font-weight: 500;
+      font-style: normal;
+      src: url("assets/fonts/Inter_500.woff2") format("woff2");
+    }
+    @font-face {
+      font-family: "Inter";
+      font-weight: 600;
+      font-style: normal;
+      src: url("assets/fonts/Inter_600.woff2") format("woff2");
+    }
+
+    #root {
+      position: relative;
+      width: 1080px;
+      height: 1080px;
+      overflow: hidden;
+      container-type: size;
+      font-family: "Inter", sans-serif;
+      color: #ffffff;
+    }
+
+    .clip {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* full-bleed ground — a clip layer, never the root */
+    .f06-listening-score-bg {
+      background:
+        radial-gradient(circle at 50% 48%, rgba(15, 51, 133, 0.42) 0%, rgba(15, 51, 133, 0) 52%),
+        #000000;
+    }
+
+    /* ---- caption above the watch (Scene 2) ---- */
+    .f06-listening-score-caption {
+      position: absolute;
+      left: 0;
+      top: 84px;
+      width: 1080px;
+      text-align: center;
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 500;
+      font-size: 30px;
+      line-height: 36px;
+      letter-spacing: -0.01em;
+      color: #a1a1a6;
+      white-space: nowrap;
+    }
+    .f06-listening-score-caption .f06-listening-score-w {
+      display: inline-block;
+      opacity: 0;
+      margin: 0 5px;
+      will-change: transform, opacity, filter;
+    }
+
+    /* ---- the drawn watch ---- */
+    .f06-listening-score-watch {
+      position: absolute;
+      left: 280px;
+      top: 184px;
+      width: 520px;
+      height: 664px;
+      transform-origin: 50% 50%;
+      will-change: transform, opacity;
+    }
+    .f06-listening-score-band {
+      position: absolute;
+      left: 120px;
+      width: 280px;
+      height: 52px;
+    }
+    .f06-listening-score-band-top {
+      top: -52px;
+      border-radius: 18px 18px 0 0;
+      background: linear-gradient(to top, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0));
+    }
+    .f06-listening-score-band-bottom {
+      top: 664px;
+      height: 40px;
+      border-radius: 0 0 18px 18px;
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0));
+    }
+    .f06-listening-score-case {
+      position: absolute;
+      inset: 0;
+      border-radius: 118px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1.5px solid rgba(100, 210, 255, 0.2);
+      box-sizing: border-box;
+    }
+    .f06-listening-score-screen {
+      position: absolute;
+      left: 22px;
+      top: 22px;
+      width: 476px;
+      height: 620px;
+      border-radius: 98px;
+      background: #000000;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+    .f06-listening-score-crown,
+    .f06-listening-score-side {
+      position: absolute;
+      left: 518px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1.5px solid rgba(100, 210, 255, 0.2);
+      box-sizing: border-box;
+    }
+    .f06-listening-score-crown {
+      top: 136px;
+      width: 16px;
+      height: 72px;
+      border-radius: 8px;
+    }
+    .f06-listening-score-side {
+      top: 232px;
+      width: 12px;
+      height: 104px;
+      border-radius: 6px;
+    }
+
+    /* ---- screen content (coordinates are relative to the screen, 476×620) ---- */
+    .f06-listening-score-eyebrow {
+      position: absolute;
+      left: 0;
+      top: 30px;
+      width: 476px;
+      text-align: center;
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 600;
+      font-size: 18px;
+      line-height: 22px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #64d2ff;
+      opacity: 0;
+    }
+    .f06-listening-score-gauge {
+      position: absolute;
+      left: 68px; /* screen x of the gauge box: watch(280)+22+68 = 370 → centre x 540 */
+      top: 44px; /* screen y: 184+22+44 = 250 → centre y 420 */
+      width: 340px;
+      height: 340px;
+      display: block;
+      overflow: visible;
+    }
+    .f06-listening-score-arc {
+      fill: none;
+      stroke: url(#f06-listening-score-grad);
+      stroke-width: 24;
+      stroke-linecap: round;
+    }
+    .f06-listening-score-arc-track {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.05);
+      stroke-width: 24;
+      stroke-linecap: round;
+    }
+    .f06-listening-score-marker {
+      fill: #ffffff;
+      stroke: rgba(0, 0, 0, 0.78);
+      stroke-width: 4;
+      opacity: 0;
+    }
+    .f06-listening-score-num-box {
+      position: absolute;
+      left: 68px;
+      top: 44px;
+      width: 340px;
+      height: 340px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .f06-listening-score-num {
+      display: inline-block;
+      width: 200px; /* fixed measure — no reflow as digit count changes */
+      text-align: center;
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 700;
+      font-size: 118px;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+      color: #64d2ff;
+      transform-origin: center center;
+      opacity: 0;
+      will-change: transform, opacity;
+    }
+    .f06-listening-score-grade {
+      position: absolute;
+      left: 0;
+      top: 372px;
+      width: 476px;
+      text-align: center;
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 600;
+      font-size: 40px;
+      line-height: 44px;
+      letter-spacing: -0.02em;
+      color: #30d158;
+      opacity: 0;
+      will-change: transform, opacity;
+    }
+    .f06-listening-score-label {
+      position: absolute;
+      left: 0;
+      top: 424px;
+      width: 476px;
+      text-align: center;
+      font-family: "Inter", sans-serif;
+      font-weight: 500;
+      font-size: 22px;
+      line-height: 28px;
+      color: #a1a1a6;
+      opacity: 0;
+      will-change: transform, opacity;
+    }
+
+    /* rows — center-outward-expansion: absolute-centred in the burst wrap, GSAP bakes -50% */
+    .f06-listening-score-burst {
+      position: absolute;
+      left: 48px;
+      top: 470px;
+      width: 380px;
+      height: 120px;
+    }
+    .f06-listening-score-row {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 380px;
+      height: 44px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 14px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1.5px solid rgba(100, 210, 255, 0.2);
+      opacity: 0;
+      will-change: transform, opacity;
+    }
+    .f06-listening-score-row-k {
+      font-family: "Inter", sans-serif;
+      font-weight: 500;
+      font-size: 20px;
+      line-height: 24px;
+      color: #ffffff;
+    }
+    .f06-listening-score-row-v {
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 600;
+      font-size: 20px;
+      line-height: 24px;
+      font-variant-numeric: tabular-nums;
+      color: #a1a1a6;
+    }
+  </style>
+
+  <div id="root" data-composition-id="06-listening-score" data-width="1080" data-height="1080" data-duration="5.307">
+    <!-- ground -->
+    <div class="clip f06-listening-score-bg" data-start="0" data-duration="5.307" data-track-index="0"></div>
+
+    <!-- content -->
+    <div class="clip" data-start="0" data-duration="5.307" data-track-index="1">
+      <div class="f06-listening-score-caption" id="f06-listening-score-caption">
+        <span class="f06-listening-score-w">After</span><span class="f06-listening-score-w">the</span><span class="f06-listening-score-w">conversation</span>
+      </div>
+
+      <div class="f06-listening-score-watch" id="f06-listening-score-watch">
+        <div class="f06-listening-score-band f06-listening-score-band-top"></div>
+        <div class="f06-listening-score-band f06-listening-score-band-bottom"></div>
+        <div class="f06-listening-score-case"></div>
+        <div class="f06-listening-score-crown"></div>
+        <div class="f06-listening-score-side"></div>
+
+        <div class="f06-listening-score-screen">
+          <div class="f06-listening-score-eyebrow" id="f06-listening-score-eyebrow">Summary</div>
+
+          <svg class="f06-listening-score-gauge" viewBox="0 0 340 340" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="f06-listening-score-grad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#ff453a" />
+                <stop offset="0.3" stop-color="#ff9f0a" />
+                <stop offset="0.55" stop-color="#ffd60a" />
+                <stop offset="1" stop-color="#30d158" />
+              </linearGradient>
+            </defs>
+            <!-- open 270° arc, gap at the bottom: starts bottom-left (135°), sweeps clockwise to bottom-right (45°) -->
+            <path class="f06-listening-score-arc-track" d="M 71 269 A 140 140 0 1 1 269 269" />
+            <path class="f06-listening-score-arc" id="f06-listening-score-arc" d="M 71 269 A 140 140 0 1 1 269 269" />
+            <circle class="f06-listening-score-marker" id="f06-listening-score-marker" cx="71" cy="269" r="8" />
+          </svg>
+
+          <div class="f06-listening-score-num-box">
+            <span class="f06-listening-score-num" id="f06-listening-score-num">0</span>
+          </div>
+
+          <div class="f06-listening-score-grade" id="f06-listening-score-grade">Good</div>
+          <div class="f06-listening-score-label" id="f06-listening-score-label">Listening Score</div>
+
+          <div class="f06-listening-score-burst" id="f06-listening-score-burst">
+            <div class="f06-listening-score-row" data-target-x="0" data-target-y="-28">
+              <span class="f06-listening-score-row-k">Longest stretch</span>
+              <span class="f06-listening-score-row-v">48s</span>
+            </div>
+            <div class="f06-listening-score-row" data-target-x="0" data-target-y="28">
+              <span class="f06-listening-score-row-k">Course-corrected</span>
+              <span class="f06-listening-score-row-v">2 of 2</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      window.__timelines = window.__timelines || {};
+      var $ = function (id) { return document.getElementById("f06-listening-score-" + id); };
+
+      var watch = $("watch");
+      var eyebrow = $("eyebrow");
+      var arc = $("arc");
+      var marker = $("marker");
+      var num = $("num");
+      var grade = $("grade");
+      var label = $("label");
+      var words = $("caption").querySelectorAll(".f06-listening-score-w");
+      var rows = $("burst").querySelectorAll(".f06-listening-score-row");
+
+      // svg-path-draw setup: measured length, dash pattern hides the whole stroke.
+      var len = arc.getTotalLength();
+      arc.style.strokeDasharray = String(len);
+      arc.style.strokeDashoffset = String(len);
+
+      var SCORE = 82;
+      var COUNT_AT = 0.45;
+      var COUNT_DUR = 1.25;
+      var COUNT_EASE = "power2.out"; // shared by arc draw, marker travel and count — one chord
+
+      var tl = gsap.timeline({ paused: true });
+
+      // ---- Scene 1 (0.0–1.96s): watch holds centre, gauge draws, number counts ----
+      tl.fromTo(watch, { opacity: 0, scale: 0.96 }, { opacity: 1, scale: 1, duration: 0.55, ease: "power2.out" }, 0);
+      tl.fromTo(eyebrow, { opacity: 0, y: -6 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 0.15);
+
+      // arc draws itself (full 270°)
+      tl.to(arc, { strokeDashoffset: 0, duration: COUNT_DUR, ease: COUNT_EASE }, COUNT_AT);
+
+      // marker travels along the drawn arc to the value; number counts 0→82 (no scale growth)
+      var state = { p: 0 };
+      var startPt = arc.getPointAtLength(0);
+      marker.setAttribute("cx", startPt.x.toFixed(2));
+      marker.setAttribute("cy", startPt.y.toFixed(2));
+      tl.to(
+        state,
+        {
+          p: 1,
+          duration: COUNT_DUR,
+          ease: COUNT_EASE,
+          onUpdate: function () {
+            num.textContent = String(Math.round(SCORE * state.p));
+            var pt = arc.getPointAtLength(len * (SCORE / 100) * state.p);
+            marker.setAttribute("cx", pt.x.toFixed(2));
+            marker.setAttribute("cy", pt.y.toFixed(2));
+          },
+        },
+        COUNT_AT
+      );
+      tl.fromTo(marker, { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "power1.out" }, COUNT_AT);
+      tl.fromTo(num, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power1.out" }, COUNT_AT);
+
+      // "Good" then "Listening Score" beneath the gauge
+      tl.fromTo(grade, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 1.45);
+      tl.fromTo(label, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 1.6);
+
+      // ---- Scene 2 (1.96–3.44s): caption above the watch, per-word staggered reveal ----
+      words.forEach(function (w, i) {
+        tl.fromTo(
+          w,
+          { opacity: 0, y: 14, filter: "blur(6px)" },
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "power2.out" },
+          2.05 + i * 0.1
+        );
+      });
+
+      // ---- Scene 3 (3.44–4.907s): rows assemble center-outward into their slots ----
+      var EXPAND_AT = 3.45;
+      var EXPAND_DUR = 1.0;
+      rows.forEach(function (el, i) {
+        tl.fromTo(
+          el,
+          { xPercent: -50, yPercent: -50, x: 0, y: 0, scale: 0.6, opacity: 0 },
+          {
+            x: Number(el.dataset.targetX),
+            y: Number(el.dataset.targetY),
+            scale: 1,
+            opacity: 1,
+            duration: EXPAND_DUR,
+            ease: "power3.out",
+          },
+          EXPAND_AT + i * 0.06
+        );
+      });
+
+      // subtle life on the number only — a single deterministic breath, no repeat/yoyo
+      tl.to(num, { scale: 1.03, duration: 0.5, ease: "sine.inOut" }, 3.7);
+      tl.to(num, { scale: 1.0, duration: 0.6, ease: "sine.inOut" }, 4.2);
+
+      window.__timelines["06-listening-score"] = tl;
+    })();
+  </script>
+</template>

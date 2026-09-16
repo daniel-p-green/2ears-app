@@ -1,0 +1,390 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Space Grotesk";
+      font-weight: 500;
+      font-style: normal;
+      src: url("assets/fonts/Space_Grotesk_500.woff2") format("woff2");
+    }
+    @font-face {
+      font-family: "Space Grotesk";
+      font-weight: 600;
+      font-style: normal;
+      src: url("assets/fonts/Space_Grotesk_600.woff2") format("woff2");
+    }
+    @font-face {
+      font-family: "Space Grotesk";
+      font-weight: 700;
+      font-style: normal;
+      src: url("assets/fonts/Space_Grotesk_700.woff2") format("woff2");
+    }
+    @font-face {
+      font-family: "Inter";
+      font-weight: 400;
+      font-style: normal;
+      src: url("assets/fonts/Inter_400.woff2") format("woff2");
+    }
+    @font-face {
+      font-family: "Inter";
+      font-weight: 500;
+      font-style: normal;
+      src: url("assets/fonts/Inter_500.woff2") format("woff2");
+    }
+    @font-face {
+      font-family: "Inter";
+      font-weight: 600;
+      font-style: normal;
+      src: url("assets/fonts/Inter_600.woff2") format("woff2");
+    }
+
+    #root {
+      position: relative;
+      width: 1080px;
+      height: 1080px;
+      overflow: hidden;
+      container-type: size;
+      font-family: "Space Grotesk", sans-serif;
+      color: #ffffff;
+    }
+
+    /* full-bleed ground on its own clip layer (track 0) */
+    [id="05-pick-the-room-bg"] {
+      position: absolute;
+      inset: 0;
+      background: #000000;
+    }
+    [id="05-pick-the-room-bg"]::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        circle at 50% 47%,
+        rgba(100, 210, 255, 0.08) 0%,
+        rgba(100, 210, 255, 0.03) 32%,
+        rgba(0, 0, 0, 0) 62%
+      );
+    }
+
+    /* stage: headline + drawn watch (track 1); slow camera push runs on this */
+    [id="05-pick-the-room-stage"] {
+      position: absolute;
+      inset: 0;
+      will-change: transform;
+    }
+
+    [id="05-pick-the-room-headline"] {
+      position: absolute;
+      top: 68px;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 500;
+      font-size: 48px;
+      line-height: 1.3;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      will-change: transform, opacity;
+    }
+
+    /* ── drawn watch ── */
+    [class~="05-pick-the-room-strap"] {
+      position: absolute;
+      left: 420px;
+      width: 240px;
+      height: 80px;
+      border: 3px solid rgba(100, 210, 255, 0.55);
+      background: #000000;
+      z-index: 1;
+    }
+    [id="05-pick-the-room-strap-top"] {
+      top: 148px;
+      border-radius: 26px 26px 0 0;
+      border-bottom: none;
+    }
+    [id="05-pick-the-room-strap-bottom"] {
+      top: 786px;
+      border-radius: 0 0 26px 26px;
+      border-top: none;
+    }
+    [id="05-pick-the-room-case"] {
+      position: absolute;
+      left: 280px;
+      top: 210px;
+      width: 520px;
+      height: 600px;
+      border-radius: 140px;
+      border: 3px solid rgba(100, 210, 255, 0.85);
+      background: #000000;
+      z-index: 2;
+      box-sizing: border-box;
+    }
+    [id="05-pick-the-room-crown"] {
+      position: absolute;
+      left: 803px;
+      top: 372px;
+      width: 16px;
+      height: 66px;
+      border-radius: 8px;
+      border: 3px solid rgba(100, 210, 255, 0.85);
+      background: #000000;
+      z-index: 1;
+      box-sizing: border-box;
+    }
+    [id="05-pick-the-room-button"] {
+      position: absolute;
+      left: 803px;
+      top: 462px;
+      width: 12px;
+      height: 100px;
+      border-radius: 6px;
+      border: 3px solid rgba(100, 210, 255, 0.55);
+      background: #000000;
+      z-index: 1;
+      box-sizing: border-box;
+    }
+    [id="05-pick-the-room-face"] {
+      position: absolute;
+      left: 24px;
+      top: 24px;
+      width: 466px;
+      height: 546px;
+      border-radius: 116px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1.5px solid rgba(100, 210, 255, 0.2);
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+    [id="05-pick-the-room-wordmark"] {
+      position: absolute;
+      left: 32px;
+      top: 22px;
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 500;
+      font-size: 30px;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      color: #64d2ff;
+    }
+
+    /* ── rows: center-outward-expansion wrap (direct-into-slot form) ── */
+    [id="05-pick-the-room-rows"] {
+      position: absolute;
+      left: 22px;
+      top: 74px;
+      width: 422px;
+      height: 436px;
+    }
+    [class~="05-pick-the-room-row"] {
+      position: absolute;
+      top: 50%;
+      left: 50%; /* GSAP xPercent/yPercent -50 bakes the centering; x/y tween the offset */
+      width: 422px;
+      height: 136px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      padding: 0 24px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1.5px solid rgba(100, 210, 255, 0.2);
+      border-radius: 12px;
+      will-change: transform, opacity;
+    }
+    [class~="05-pick-the-room-sym"] {
+      position: relative;
+      width: 78px;
+      height: 78px;
+      flex: 0 0 78px;
+    }
+    [class~="05-pick-the-room-circle"] {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: #64d2ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+    [class~="05-pick-the-room-circle"] svg {
+      width: 44px;
+      height: 44px;
+      display: block;
+    }
+    [id="05-pick-the-room-glow"] {
+      position: absolute;
+      inset: -34px;
+      border-radius: 50%;
+      background: radial-gradient(
+        circle,
+        rgba(100, 210, 255, 0.9) 0%,
+        rgba(15, 51, 133, 0.7) 40%,
+        rgba(15, 51, 133, 0) 70%
+      );
+      opacity: 0;
+      z-index: 1;
+      will-change: transform, opacity;
+    }
+    [class~="05-pick-the-room-copy"] {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-width: 0;
+    }
+    [class~="05-pick-the-room-title"] {
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 600;
+      font-size: 34px;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+    }
+    [class~="05-pick-the-room-detail"] {
+      margin-top: 6px;
+      font-family: "Inter", sans-serif;
+      font-weight: 400;
+      font-size: 24px;
+      line-height: 1.3;
+      color: #a1a1a6;
+    }
+  </style>
+
+  <div id="root" data-composition-id="05-pick-the-room" data-width="1080" data-height="1080" data-duration="3.529">
+    <div id="05-pick-the-room-bg" class="clip" data-start="0" data-duration="3.529" data-track-index="0"></div>
+
+    <div id="05-pick-the-room-stage" class="clip" data-start="0" data-duration="3.529" data-track-index="1">
+      <div id="05-pick-the-room-headline">Pick the room</div>
+
+      <div id="05-pick-the-room-strap-top" class="05-pick-the-room-strap"></div>
+      <div id="05-pick-the-room-strap-bottom" class="05-pick-the-room-strap"></div>
+      <div id="05-pick-the-room-crown"></div>
+      <div id="05-pick-the-room-button"></div>
+
+      <div id="05-pick-the-room-case">
+        <div id="05-pick-the-room-face">
+          <div id="05-pick-the-room-wordmark">two.ears</div>
+
+          <div id="05-pick-the-room-rows">
+            <!-- Listen -->
+            <div class="05-pick-the-room-row" data-target-x="0" data-target-y="-150">
+              <div class="05-pick-the-room-sym">
+                <div id="05-pick-the-room-glow"></div>
+                <div class="05-pick-the-room-circle">
+                  <svg viewBox="0 0 48 48" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M14 20a10 10 0 0 1 20 0c0 6-4 8.5-5.5 12.5C27.2 36 25.2 39 21.5 39c-3.2 0-5.5-2-5.5-4.5" />
+                    <path d="M20.5 20.5a3.5 3.5 0 0 1 7 0c0 3-2.5 4-3 7.5" />
+                  </svg>
+                </div>
+              </div>
+              <div class="05-pick-the-room-copy">
+                <div class="05-pick-the-room-title">Listen</div>
+                <div class="05-pick-the-room-detail">Tap past 40%</div>
+              </div>
+            </div>
+
+            <!-- Balanced -->
+            <div class="05-pick-the-room-row" data-target-x="0" data-target-y="0">
+              <div class="05-pick-the-room-sym">
+                <div class="05-pick-the-room-circle">
+                  <svg viewBox="0 0 48 48" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M9 13a3 3 0 0 1 3-3h17a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-3v5l-5-5H12a3 3 0 0 1-3-3z" />
+                    <path d="M20 21h16a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3h-3v5l-5-5h-8a3 3 0 0 1-3-3v-8a3 3 0 0 1 3-3z" fill="#64d2ff" />
+                  </svg>
+                </div>
+              </div>
+              <div class="05-pick-the-room-copy">
+                <div class="05-pick-the-room-title">Balanced</div>
+                <div class="05-pick-the-room-detail">Tap past 55%</div>
+              </div>
+            </div>
+
+            <!-- Presenting -->
+            <div class="05-pick-the-room-row" data-target-x="0" data-target-y="150">
+              <div class="05-pick-the-room-sym">
+                <div class="05-pick-the-room-circle">
+                  <svg viewBox="0 0 48 48" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="18" cy="17" r="6" />
+                    <path d="M6 38c0-7 5.4-11 12-11s12 4 12 11" />
+                    <path d="M33 14a8 8 0 0 1 0 12" />
+                    <path d="M38 9.5a14.5 14.5 0 0 1 0 21" />
+                  </svg>
+                </div>
+              </div>
+              <div class="05-pick-the-room-copy">
+                <div class="05-pick-the-room-title">Presenting</div>
+                <div class="05-pick-the-room-detail">Stats only</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FRAME_ID = "05-pick-the-room";
+      var DURATION = 3.029;
+      var root = document.querySelector('[data-composition-id="' + FRAME_ID + '"]');
+      var q = function (id) { return root.querySelector('[id="' + FRAME_ID + "-" + id + '"]'); };
+
+      var stage = q("stage");
+      var headline = q("headline");
+      var glow = q("glow");
+      var rows = root.getElementsByClassName(FRAME_ID + "-row");
+
+      var tl = gsap.timeline({ paused: true });
+
+      /* ── Scene 1 (0.0–~0.95s): the drawn watch holds at center from t=0;
+         "Pick the room" arrives above it on the VO cue. A slow camera push-in
+         (blueprint hold move) runs underneath for the whole shot. ── */
+      tl.fromTo(
+        stage,
+        { scale: 1, transformOrigin: "50% 50%" },
+        { scale: 1.03, duration: DURATION, ease: "none" },
+        0
+      );
+      tl.fromTo(
+        headline,
+        { opacity: 0, y: 18 },
+        { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" },
+        0.15
+      );
+
+      /* ── Scene 2 (~0.95–2.8s): three rows assemble one per spoken word —
+         center-outward-expansion, direct-into-slot (partially-spread start),
+         each row sliding a short path into its own slot. Listen / Balanced /
+         Presenting land on their VO cues. ── */
+      var ROW_AT = [1.0, 1.6, 2.2];
+      var EXPAND_DUR = 0.6;
+      var START_PROGRESS = 0.35;
+      for (var i = 0; i < rows.length; i++) {
+        var el = rows[i];
+        var tx = Number(el.getAttribute("data-target-x"));
+        var ty = Number(el.getAttribute("data-target-y"));
+        tl.fromTo(
+          el,
+          { xPercent: -50, yPercent: -50, x: tx * START_PROGRESS, y: ty * START_PROGRESS, scale: 0.82, opacity: 0 },
+          { xPercent: -50, yPercent: -50, x: tx, y: ty, scale: 1, opacity: 1, duration: EXPAND_DUR, ease: "power3.out" },
+          ROW_AT[i]
+        );
+      }
+
+      /* ── Scene 3 (~2.55s–end): the list holds; the Listen circle glows once —
+         ambient-glow-bloom, pulse-on-arrival form: bloom slightly past peak,
+         then ease to a low steady hold. One pass, no loop. ── */
+      tl.fromTo(
+        glow,
+        { opacity: 0, scale: 0.85, transformOrigin: "50% 50%" },
+        { opacity: 0.38, scale: 1.06, duration: 0.28, ease: "power2.out" },
+        2.55
+      );
+      tl.to(glow, { opacity: 0.24, scale: 1, duration: 0.2, ease: "power1.inOut" }, 2.83);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FRAME_ID] = tl;
+    })();
+  </script>
+</template>

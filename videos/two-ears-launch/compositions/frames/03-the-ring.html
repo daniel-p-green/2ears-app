@@ -1,0 +1,370 @@
+<template>
+  <style>
+    @font-face { font-family: "Space Grotesk"; font-weight: 500; font-style: normal; src: url("assets/fonts/Space_Grotesk_500.woff2") format("woff2"); }
+    @font-face { font-family: "Space Grotesk"; font-weight: 600; font-style: normal; src: url("assets/fonts/Space_Grotesk_600.woff2") format("woff2"); }
+    @font-face { font-family: "Space Grotesk"; font-weight: 700; font-style: normal; src: url("assets/fonts/Space_Grotesk_700.woff2") format("woff2"); }
+    @font-face { font-family: "Inter"; font-weight: 400; font-style: normal; src: url("assets/fonts/Inter_400.woff2") format("woff2"); }
+    @font-face { font-family: "Inter"; font-weight: 500; font-style: normal; src: url("assets/fonts/Inter_500.woff2") format("woff2"); }
+    @font-face { font-family: "Inter"; font-weight: 600; font-style: normal; src: url("assets/fonts/Inter_600.woff2") format("woff2"); }
+
+    #root {
+      position: relative;
+      width: 1080px;
+      height: 1080px;
+      overflow: hidden;
+      container-type: size;
+      font-family: "Space Grotesk", sans-serif;
+      color: #FFFFFF;
+    }
+    #root .clip {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ground: full-bleed black with a faint cold vignette behind the watch */
+    #root .ring3-bg {
+      background:
+        radial-gradient(circle at 50% 46%, rgba(15, 51, 133, 0.22) 0%, rgba(15, 51, 133, 0) 62%),
+        #000000;
+    }
+
+    /* caption line above the watch */
+    #root .ring3-capline {
+      position: absolute;
+      left: 0;
+      top: 52px;
+      width: 1080px;
+      height: 48px;
+    }
+    #root .ring3-cap {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1080px;
+      height: 48px;
+      line-height: 48px;
+      text-align: center;
+      font-family: "Inter", sans-serif;
+      font-weight: 500;
+      font-size: 34px;
+      letter-spacing: -0.01em;
+      color: #A1A1A6;
+      opacity: 0;
+    }
+
+    /* tap pulses — thin orange rings emerging from behind the watch */
+    #root .ring3-pulse {
+      position: absolute;
+      left: 300px;
+      top: 260px;
+      width: 480px;
+      height: 480px;
+      border-radius: 50%;
+      border: 2px solid #FF9F0A;
+      opacity: 0;
+    }
+
+    /* the drawn watch */
+    #root .ring3-watch {
+      position: absolute;
+      left: 290px;
+      top: 200px;
+      width: 500px;
+      height: 600px;
+    }
+    #root .ring3-band {
+      position: absolute;
+      left: 115px;
+      width: 270px;
+      height: 96px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1.5px solid rgba(100, 210, 255, 0.2);
+    }
+    #root .ring3-band-top {
+      top: -78px;
+      border-radius: 34px 34px 0 0;
+      border-bottom: none;
+    }
+    #root .ring3-band-bottom {
+      top: 582px;
+      height: 88px;
+      border-radius: 0 0 34px 34px;
+      border-top: none;
+    }
+    #root .ring3-case {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 500px;
+      height: 600px;
+      border-radius: 118px;
+      background: #1A1A1D;
+      border: 1.5px solid rgba(100, 210, 255, 0.2);
+      box-sizing: border-box;
+    }
+    #root .ring3-crown {
+      position: absolute;
+      left: 486px;
+      top: 168px;
+      width: 22px;
+      height: 78px;
+      border-radius: 11px;
+      background: #2A2A2E;
+      border: 1.5px solid rgba(100, 210, 255, 0.2);
+      box-sizing: border-box;
+    }
+    #root .ring3-sidebtn {
+      position: absolute;
+      left: 490px;
+      top: 274px;
+      width: 12px;
+      height: 112px;
+      border-radius: 6px;
+      background: #2A2A2E;
+      border: 1.5px solid rgba(100, 210, 255, 0.2);
+      box-sizing: border-box;
+    }
+    #root .ring3-screen {
+      position: absolute;
+      left: 22px;
+      top: 22px;
+      width: 456px;
+      height: 556px;
+      border-radius: 98px;
+      background: #000000;
+      overflow: hidden;
+    }
+    #root .ring3-glow {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 456px;
+      height: 556px;
+    }
+    #root .ring3-glow-cyan {
+      background: radial-gradient(circle at 50% 54%, rgba(100, 210, 255, 0.15) 0%, rgba(100, 210, 255, 0) 68%);
+      opacity: 1;
+    }
+    #root .ring3-glow-orange {
+      background: radial-gradient(circle at 50% 54%, rgba(255, 159, 10, 0.18) 0%, rgba(255, 159, 10, 0) 68%);
+      opacity: 0;
+    }
+    #root .ring3-svg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 456px;
+      height: 556px;
+      display: block;
+    }
+    #root .ring3-track {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.06);
+      stroke-width: 30;
+      stroke-linecap: round;
+    }
+    #root .ring3-fill {
+      fill: none;
+      stroke-width: 30;
+      stroke-linecap: round;
+      transform-origin: 228px 300px;
+      transform: rotate(-90deg);
+      opacity: 0;
+    }
+    #root .ring3-tick {
+      fill: none;
+      stroke: #FFFFFF;
+      stroke-width: 6;
+      stroke-linecap: round;
+      opacity: 0;
+    }
+
+    /* centered value: number + % and the "talking" label beneath */
+    #root .ring3-value {
+      position: absolute;
+      left: 0;
+      top: 232px;
+      width: 456px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #root .ring3-numwrap {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 700;
+      font-size: 108px;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      color: #64D2FF;
+    }
+    #root .ring3-num {
+      display: inline-block;
+      min-width: 2ch;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+    #root .ring3-suffix {
+      display: inline-block;
+      opacity: 0;
+    }
+    #root .ring3-label {
+      margin-top: 10px;
+      font-family: "Inter", sans-serif;
+      font-weight: 500;
+      font-size: 30px;
+      line-height: 1;
+      letter-spacing: 0.02em;
+      color: #A1A1A6;
+      opacity: 0;
+    }
+  </style>
+
+  <div id="root" data-composition-id="03-the-ring" data-width="1080" data-height="1080" data-duration="10.143">
+    <!-- track 0: ground -->
+    <div class="clip ring3-bg" data-start="0" data-duration="10.143" data-track-index="0"></div>
+
+    <!-- track 1: tap pulses (behind the watch so they emerge from its edge) -->
+    <div class="clip" data-start="0" data-duration="10.143" data-track-index="1">
+      <div class="ring3-pulse" id="03-the-ring-pulse-1"></div>
+      <div class="ring3-pulse" id="03-the-ring-pulse-2"></div>
+      <div class="ring3-pulse" id="03-the-ring-pulse-3"></div>
+    </div>
+
+    <!-- track 2: the drawn watch -->
+    <div class="clip" data-start="0" data-duration="10.143" data-track-index="2">
+      <div class="ring3-watch" id="03-the-ring-watch">
+        <div class="ring3-band ring3-band-top"></div>
+        <div class="ring3-band ring3-band-bottom"></div>
+        <div class="ring3-crown"></div>
+        <div class="ring3-sidebtn"></div>
+        <div class="ring3-case"></div>
+        <div class="ring3-screen">
+          <div class="ring3-glow ring3-glow-cyan" id="03-the-ring-glow-cyan"></div>
+          <div class="ring3-glow ring3-glow-orange" id="03-the-ring-glow-orange"></div>
+          <svg class="ring3-svg" viewBox="0 0 456 556" xmlns="http://www.w3.org/2000/svg">
+            <circle class="ring3-track" cx="228" cy="300" r="142" />
+            <circle class="ring3-fill" id="03-the-ring-fill" cx="228" cy="300" r="142" stroke="#64D2FF" />
+            <line class="ring3-tick" id="03-the-ring-tick" x1="305.6" y1="406.8" x2="329.1" y2="439.1" />
+          </svg>
+          <div class="ring3-value">
+            <div class="ring3-numwrap" id="03-the-ring-numwrap">
+              <span class="ring3-num" id="03-the-ring-num">0</span><span class="ring3-suffix" id="03-the-ring-suffix">%</span>
+            </div>
+            <div class="ring3-label" id="03-the-ring-label">talking</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- track 3: caption line above the watch -->
+    <div class="clip" data-start="0" data-duration="10.143" data-track-index="3">
+      <div class="ring3-capline">
+        <div class="ring3-cap" id="03-the-ring-cap-1">your share of the last 2 minutes</div>
+        <div class="ring3-cap" id="03-the-ring-cap-2">one tap</div>
+        <div class="ring3-cap" id="03-the-ring-cap-3">one more</div>
+        <div class="ring3-cap" id="03-the-ring-cap-4">silence</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var PRI = "#64D2FF";
+      var NEG = "#FF9F0A";
+
+      var $ = function (id) { return document.getElementById("03-the-ring-" + id); };
+      var watch = $("watch");
+      var fill = $("fill");
+      var tick = $("tick");
+      var num = $("num");
+      var numwrap = $("numwrap");
+      var suffix = $("suffix");
+      var label = $("label");
+      var glowCyan = $("glow-cyan");
+      var glowOrange = $("glow-orange");
+      var pulses = [$("pulse-1"), $("pulse-2"), $("pulse-3")];
+      var caps = [$("cap-1"), $("cap-2"), $("cap-3"), $("cap-4")];
+
+      // svg-path-draw setup: measured circumference, dash shifted fully out of view
+      var C = fill.getTotalLength() || 2 * Math.PI * 142;
+      fill.style.strokeDasharray = C + "";
+      fill.style.strokeDashoffset = C + "";
+
+      var share = { v: 0 };
+      var setNum = function () { num.textContent = String(Math.round(share.v)); };
+
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+      window.__timelines["03-the-ring"] = tl;
+
+      // number and ring fill share position + duration + ease so they land as one beat
+      var fillTo = function (target, dur, ease, at) {
+        tl.to(share, { v: target, duration: dur, ease: ease, onUpdate: setNum }, at);
+        tl.to(fill, { strokeDashoffset: C * (1 - target / 100), duration: dur, ease: ease }, at);
+      };
+
+      // caption line change: cut-the-curve style swap (Z-scale + blur + opacity)
+      var swapCap = function (fromEl, toEl, at) {
+        tl.to(fromEl, { opacity: 0, scale: 1.05, filter: "blur(6px)", duration: 0.14, ease: "power2.in" }, at);
+        tl.fromTo(toEl,
+          { opacity: 0, scale: 0.95, filter: "blur(6px)" },
+          { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.24, ease: "power2.out" },
+          at + 0.08);
+      };
+
+      var pulse = function (el, at, dur) {
+        tl.fromTo(el,
+          { opacity: 0.42, scale: 0.85 },
+          { opacity: 0, scale: 1.6, duration: dur, ease: "power2.out" },
+          at);
+      };
+
+      // ---- Scene 1 (0.0–2.6s): watch holds, ring draws to 30%, value counts up ----
+      tl.fromTo(watch, { opacity: 0, scale: 0.97 }, { opacity: 1, scale: 1, duration: 0.45, ease: "power2.out" }, 0);
+      tl.fromTo(caps[0], { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 0.35);
+
+      tl.fromTo(fill, { opacity: 0 }, { opacity: 1, duration: 0.15, ease: "power1.out" }, 0.5);
+      fillTo(30, 1.8, "power2.out", 0.5);
+      tl.fromTo(label, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 0.9);
+      tl.to(tick, { opacity: 0.7, duration: 0.4, ease: "power1.out" }, 1.8);
+      tl.fromTo(suffix, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.4, ease: "back.out(1.7)" }, 2.3);
+
+      // ---- Scene 2 (2.6–4.8s): fill crosses the 40% tick (~3.46s), turns orange, one pulse ----
+      fillTo(52, 1.8, "power2.inOut", 2.6);
+      var T_UP = 3.46;
+      tl.to(fill, { attr: { stroke: NEG }, duration: 0.35, ease: "power1.inOut" }, T_UP);
+      tl.to(numwrap, { color: NEG, duration: 0.35, ease: "power1.inOut" }, T_UP);
+      tl.to(glowCyan, { opacity: 0, duration: 0.5, ease: "power1.inOut" }, T_UP);
+      tl.to(glowOrange, { opacity: 1, duration: 0.5, ease: "power1.inOut" }, T_UP);
+      pulse(pulses[0], T_UP, 0.9);
+      swapCap(caps[0], caps[1], 3.52);
+
+      // ---- Scene 3 (4.8–6.6s): nudge 52→58, double tap = two quick pulses ----
+      fillTo(58, 0.7, "power2.out", 4.9);
+      swapCap(caps[1], caps[2], 5.5);
+      pulse(pulses[1], 5.55, 0.8);
+      pulse(pulses[2], 5.75, 0.8);
+
+      // ---- Scene 4 (6.6–9.0s): drain 58→34 on a long power3 tail, back under (~7.4s), orange → cyan ----
+      fillTo(34, 1.9, "power3.out", 6.7);
+      var T_DOWN = 7.4;
+      tl.to(fill, { attr: { stroke: PRI }, duration: 0.5, ease: "power1.inOut" }, T_DOWN);
+      tl.to(numwrap, { color: PRI, duration: 0.5, ease: "power1.inOut" }, T_DOWN);
+      tl.to(glowOrange, { opacity: 0, duration: 0.6, ease: "power1.inOut" }, T_DOWN);
+      tl.to(glowCyan, { opacity: 1, duration: 0.6, ease: "power1.inOut" }, T_DOWN);
+      swapCap(caps[2], caps[3], 7.7);
+      tl.to(caps[3], { opacity: 0, duration: 0.5, ease: "power1.out" }, 8.6);
+
+      // subtle ambient drift on the watch across the whole shot (no pulse at rest)
+      tl.to(watch, { y: -3, duration: 4.8, ease: "sine.inOut" }, 0);
+      tl.to(watch, { y: 0, duration: 4.8, ease: "sine.inOut" }, 4.8);
+    })();
+  </script>
+</template>

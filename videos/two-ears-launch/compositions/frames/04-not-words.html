@@ -1,0 +1,228 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Space Grotesk";
+      font-weight: 600;
+      font-style: normal;
+      font-display: block;
+      src: url("assets/fonts/Space_Grotesk_600.woff2") format("woff2");
+    }
+    @font-face {
+      font-family: "Inter";
+      font-weight: 400;
+      font-style: normal;
+      font-display: block;
+      src: url("assets/fonts/Inter_400.woff2") format("woff2");
+    }
+
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1080px;
+      height: 1080px;
+      overflow: hidden;
+      container-type: size;
+      font-family: "Space Grotesk", sans-serif;
+      color: #ffffff;
+    }
+
+    .clip {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Full-bleed black ground — its own clip, never the root. */
+    [class~="04-not-words-bg"] {
+      background: #000000;
+    }
+
+    /* Stage: the top 83% only (caption keep-out below y = 896). */
+    [class~="04-not-words-stage"] {
+      display: grid;
+      place-items: center;
+      height: 896px;
+      width: 1080px;
+    }
+
+    /* Three statements stacked on the same grid cell; the sequencer shows one. */
+    [class~="04-not-words-line"] {
+      grid-area: 1 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      max-width: 842px;
+      visibility: hidden;
+    }
+
+    [class~="04-not-words-text"] {
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 600;
+      font-size: 64px;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      text-align: center;
+      color: #ffffff;
+      white-space: nowrap;
+    }
+
+    [class~="04-not-words-word"] {
+      display: inline-block;
+      will-change: transform, opacity;
+    }
+
+    [class~="04-not-words-accent"] {
+      color: #64d2ff;
+    }
+
+    [class~="04-not-words-glyph"] {
+      flex: 0 0 auto;
+      width: 52px;
+      height: 52px;
+      overflow: visible;
+    }
+
+    [class~="04-not-words-glyph"] circle,
+    [class~="04-not-words-glyph"] line {
+      fill: none;
+      stroke: rgba(100, 210, 255, 0.2);
+      stroke-width: 1.27;
+      stroke-linecap: round;
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+  </style>
+
+  <div id="root" data-composition-id="04-not-words" data-width="1080" data-height="1080" data-duration="7.391">
+    <div class="clip 04-not-words-bg" data-start="0" data-duration="7.391" data-track-index="0"></div>
+
+    <div class="clip 04-not-words-stage" data-start="0" data-duration="7.391" data-track-index="1">
+      <!-- Beat 1 -->
+      <div class="04-not-words-line" data-beat="0">
+        <div class="04-not-words-text">
+          <span class="04-not-words-word">Loudness,</span>
+          <span class="04-not-words-word 04-not-words-accent">not</span>
+          <span class="04-not-words-word">words.</span>
+        </div>
+      </div>
+
+      <!-- Beat 2 -->
+      <div class="04-not-words-line" data-beat="1">
+        <svg class="04-not-words-glyph" viewBox="0 0 44 44" aria-hidden="true">
+          <circle cx="22" cy="22" r="20" pathLength="1"></circle>
+          <line x1="7.86" y1="7.86" x2="36.14" y2="36.14" pathLength="1"></line>
+        </svg>
+        <div class="04-not-words-text">
+          <span class="04-not-words-word">Nothing</span>
+          <span class="04-not-words-word">recorded.</span>
+        </div>
+      </div>
+
+      <!-- Beat 3 -->
+      <div class="04-not-words-line" data-beat="2">
+        <svg class="04-not-words-glyph" viewBox="0 0 44 44" aria-hidden="true">
+          <circle cx="22" cy="22" r="20" pathLength="1"></circle>
+          <line x1="7.86" y1="7.86" x2="36.14" y2="36.14" pathLength="1"></line>
+        </svg>
+        <div class="04-not-words-text">
+          <span class="04-not-words-word">Nothing</span>
+          <span class="04-not-words-word">leaves</span><br />
+          <span class="04-not-words-word">your</span>
+          <span class="04-not-words-word">wrist.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var ID = "04-not-words";
+      var DURATION = 6.891;
+
+      var root = document.querySelector('[data-composition-id="' + ID + '"]');
+      var lines = Array.prototype.slice.call(
+        root.querySelectorAll('[class~="' + ID + '-line"]')
+      );
+
+      // dynamic-content-sequencing: precompute the beat grid ONCE at build.
+      // Starts are pinned to the voiceover cues rather than derived from
+      // character count — the narration fixes when each statement lands.
+      var BEATS = [
+        { key: "loudness", start: 0.0 },
+        { key: "recorded", start: 2.2 },
+        { key: "wrist",    start: 4.0 }
+      ];
+
+      function beatAt(t) {
+        for (var i = BEATS.length - 1; i >= 0; i--) {
+          if (t >= BEATS[i].start) return i;
+        }
+        return 0;
+      }
+
+      var lastBeat = -1;
+      function applyBeat(i) {
+        if (i === lastBeat) return; // swap DOM state only on transitions — hard cut
+        for (var k = 0; k < lines.length; k++) {
+          lines[k].style.visibility = k === i ? "visible" : "hidden";
+        }
+        lastBeat = i;
+      }
+      applyBeat(0);
+
+      var tl = gsap.timeline({ paused: true });
+
+      // Linear driver: the sequencer that performs each hard cut.
+      var driver = { t: 0 };
+      tl.to(driver, {
+        t: DURATION,
+        duration: DURATION,
+        ease: "none",
+        onUpdate: function () { applyBeat(beatAt(driver.t)); }
+      }, 0);
+
+      // Per-word staggered reveal for a beat's statement (opacity + small rise, nothing else).
+      function revealWords(line, at, stagger) {
+        var words = line.querySelectorAll('[class~="' + ID + '-word"]');
+        tl.fromTo(words,
+          { opacity: 0, y: 14 },
+          { opacity: 1, y: 0, duration: 0.45, ease: "power2.out", stagger: stagger },
+          at
+        );
+      }
+
+      // Crossed-out circle: stroke-dashoffset draw, circle first, then the diagonal.
+      function drawGlyph(line, at) {
+        var circle = line.querySelector("circle");
+        var slash = line.querySelector("line");
+        tl.fromTo(circle,
+          { attr: { "stroke-dashoffset": 1 } },
+          { attr: { "stroke-dashoffset": 0 }, duration: 0.5, ease: "power1.inOut" },
+          at
+        );
+        tl.fromTo(slash,
+          { attr: { "stroke-dashoffset": 1 } },
+          { attr: { "stroke-dashoffset": 0 }, duration: 0.3, ease: "power1.out" },
+          at + 0.46
+        );
+      }
+
+      // Scene 1 (0.0–2.2s): "Loudness, not words." arrives alone, then holds.
+      revealWords(lines[0], 0.10, 0.18);
+
+      // Scene 2 (2.2–4.0s): hard cut (driver) → "Nothing recorded." + glyph draws.
+      revealWords(lines[1], BEATS[1].start + 0.02, 0.18);
+      drawGlyph(lines[1], BEATS[1].start + 0.02);
+
+      // Scene 3 (4.0–end): hard cut (driver) → "Nothing leaves your wrist." + glyph; holds still to the cut.
+      revealWords(lines[2], BEATS[2].start + 0.02, 0.16);
+      drawGlyph(lines[2], BEATS[2].start + 0.02);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[ID] = tl;
+    })();
+  </script>
+</template>

@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "preferences": {
+    "style_preset.product-launch-video": {
+      "value": "blue-professional",
+      "confirmed_in": [
+        "two-ears-launch"
+      ],
+      "updated_at": "2026-09-16T18:49:49.778Z"
+    },
+    "destination": {
+      "value": "x-feed",
+      "confirmed_in": [
+        "two-ears-launch"
+      ],
+      "updated_at": "2026-09-16T18:50:05.967Z"
+    },
+    "aspect": {
+      "value": "1080x1080",
+      "confirmed_in": [
+        "two-ears-launch"
+      ],
+      "updated_at": "2026-09-16T18:50:06.000Z"
+    },
+    "language": {
+      "value": "en",
+      "confirmed_in": [
+        "two-ears-launch"
+      ],
+      "updated_at": "2026-09-16T18:50:06.046Z"
+    },
+    "flow": {
+      "value": "automation",
+      "confirmed_in": [
+        "two-ears-launch"
+      ],
+      "updated_at": "2026-09-16T18:50:06.082Z"
+    },
+    "storyboard": {
+      "value": "no",
+      "confirmed_in": [
+        "two-ears-launch"
+      ],
+      "updated_at": "2026-09-16T18:50:06.116Z"
+    }
+  },
+  "sightings": {}
+}

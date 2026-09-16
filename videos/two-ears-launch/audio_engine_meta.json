@@ -1,0 +1,702 @@
+{
+  "tts_provider": "kokoro",
+  "voice_id": "am_michael",
+  "bgm": null,
+  "bgm_pending": false,
+  "bgm_provider": null,
+  "bgm_pid": null,
+  "bgm_log": null,
+  "bgm_mode": null,
+  "bgm_target_duration_s": null,
+  "bgm_seed_duration_s": null,
+  "bgm_loop_count": null,
+  "voices": [
+    {
+      "id": "01",
+      "path": "assets/voice/01.wav",
+      "duration_s": 5.013,
+      "words": [
+        {
+          "id": "w0",
+          "text": "Some",
+          "start": 0.07,
+          "end": 0.29
+        },
+        {
+          "id": "w1",
+          "text": "rooms",
+          "start": 0.3,
+          "end": 0.67
+        },
+        {
+          "id": "w2",
+          "text": "are",
+          "start": 0.67,
+          "end": 0.89
+        },
+        {
+          "id": "w3",
+          "text": "for",
+          "start": 0.89,
+          "end": 1.11
+        },
+        {
+          "id": "w4",
+          "text": "listening,",
+          "start": 1.11,
+          "end": 1.89
+        },
+        {
+          "id": "w5",
+          "text": "then",
+          "start": 1.89,
+          "end": 2.07
+        },
+        {
+          "id": "w6",
+          "text": "somehow",
+          "start": 2.07,
+          "end": 2.39
+        },
+        {
+          "id": "w7",
+          "text": "you're",
+          "start": 2.39,
+          "end": 2.65
+        },
+        {
+          "id": "w8",
+          "text": "talking,",
+          "start": 2.72,
+          "end": 3.64
+        },
+        {
+          "id": "w9",
+          "text": "then",
+          "start": 3.65,
+          "end": 3.77
+        },
+        {
+          "id": "w10",
+          "text": "you're",
+          "start": 3.77,
+          "end": 3.95
+        },
+        {
+          "id": "w11",
+          "text": "broadcasting.",
+          "start": 3.95,
+          "end": 4.9
+        }
+      ]
+    },
+    {
+      "id": "02",
+      "path": "assets/voice/02.wav",
+      "duration_s": 6.016,
+      "words": [
+        {
+          "id": "w0",
+          "text": "Two",
+          "start": 0.04,
+          "end": 0.25
+        },
+        {
+          "id": "w1",
+          "text": "ears",
+          "start": 0.25,
+          "end": 0.58
+        },
+        {
+          "id": "w2",
+          "text": "taps",
+          "start": 0.58,
+          "end": 0.91
+        },
+        {
+          "id": "w3",
+          "text": "your",
+          "start": 0.91,
+          "end": 1.24
+        },
+        {
+          "id": "w4",
+          "text": "wrist",
+          "start": 1.24,
+          "end": 1.57
+        },
+        {
+          "id": "w5",
+          "text": "the",
+          "start": 1.7,
+          "end": 1.84
+        },
+        {
+          "id": "w6",
+          "text": "moment",
+          "start": 1.84,
+          "end": 2.12
+        },
+        {
+          "id": "w7",
+          "text": "you've",
+          "start": 2.18,
+          "end": 2.32
+        },
+        {
+          "id": "w8",
+          "text": "talked",
+          "start": 2.39,
+          "end": 2.62
+        },
+        {
+          "id": "w9",
+          "text": "past",
+          "start": 2.81,
+          "end": 3.14
+        },
+        {
+          "id": "w10",
+          "text": "the",
+          "start": 3.24,
+          "end": 3.4
+        },
+        {
+          "id": "w11",
+          "text": "point",
+          "start": 3.4,
+          "end": 3.74
+        },
+        {
+          "id": "w12",
+          "text": "of",
+          "start": 3.74,
+          "end": 3.84
+        },
+        {
+          "id": "w13",
+          "text": "listening.",
+          "start": 3.91,
+          "end": 4.72
+        },
+        {
+          "id": "w14",
+          "text": "Nobody",
+          "start": 4.76,
+          "end": 5.15
+        },
+        {
+          "id": "w15",
+          "text": "else",
+          "start": 5.15,
+          "end": 5.36
+        },
+        {
+          "id": "w16",
+          "text": "feels",
+          "start": 5.43,
+          "end": 5.79
+        },
+        {
+          "id": "w17",
+          "text": "it.",
+          "start": 5.79,
+          "end": 6.16
+        }
+      ]
+    },
+    {
+      "id": "03",
+      "path": "assets/voice/03.wav",
+      "duration_s": 9.643,
+      "words": [
+        {
+          "id": "w0",
+          "text": "It",
+          "start": 0.08,
+          "end": 0.11
+        },
+        {
+          "id": "w1",
+          "text": "measures",
+          "start": 0.11,
+          "end": 0.56
+        },
+        {
+          "id": "w2",
+          "text": "your",
+          "start": 0.57,
+          "end": 0.8
+        },
+        {
+          "id": "w3",
+          "text": "share",
+          "start": 0.8,
+          "end": 1.09
+        },
+        {
+          "id": "w4",
+          "text": "of",
+          "start": 1.09,
+          "end": 1.2
+        },
+        {
+          "id": "w5",
+          "text": "the",
+          "start": 1.2,
+          "end": 1.37
+        },
+        {
+          "id": "w6",
+          "text": "last",
+          "start": 1.37,
+          "end": 1.52
+        },
+        {
+          "id": "w7",
+          "text": "two",
+          "start": 1.6,
+          "end": 1.8
+        },
+        {
+          "id": "w8",
+          "text": "minutes",
+          "start": 1.8,
+          "end": 2.18
+        },
+        {
+          "id": "w9",
+          "text": "from",
+          "start": 2.18,
+          "end": 2.4
+        },
+        {
+          "id": "w10",
+          "text": "loudness",
+          "start": 2.4,
+          "end": 2.92
+        },
+        {
+          "id": "w11",
+          "text": "alone",
+          "start": 2.92,
+          "end": 3.4
+        },
+        {
+          "id": "w12",
+          "text": "on",
+          "start": 3.4,
+          "end": 3.65
+        },
+        {
+          "id": "w13",
+          "text": "the",
+          "start": 3.65,
+          "end": 3.93
+        },
+        {
+          "id": "w14",
+          "text": "watch.",
+          "start": 4.1,
+          "end": 4.76
+        },
+        {
+          "id": "w15",
+          "text": "Cross",
+          "start": 4.84,
+          "end": 5.23
+        },
+        {
+          "id": "w16",
+          "text": "your",
+          "start": 5.23,
+          "end": 5.6
+        },
+        {
+          "id": "w17",
+          "text": "line",
+          "start": 5.62,
+          "end": 5.99
+        },
+        {
+          "id": "w18",
+          "text": "one",
+          "start": 5.99,
+          "end": 6.27
+        },
+        {
+          "id": "w19",
+          "text": "tap,",
+          "start": 6.27,
+          "end": 6.76
+        },
+        {
+          "id": "w20",
+          "text": "keep",
+          "start": 6.76,
+          "end": 7.1
+        },
+        {
+          "id": "w21",
+          "text": "going",
+          "start": 7.1,
+          "end": 7.53
+        },
+        {
+          "id": "w22",
+          "text": "one",
+          "start": 7.53,
+          "end": 7.79
+        },
+        {
+          "id": "w23",
+          "text": "more,",
+          "start": 7.79,
+          "end": 8.32
+        },
+        {
+          "id": "w24",
+          "text": "back",
+          "start": 8.32,
+          "end": 8.64
+        },
+        {
+          "id": "w25",
+          "text": "under",
+          "start": 8.64,
+          "end": 8.97
+        },
+        {
+          "id": "w26",
+          "text": "silence.",
+          "start": 9.53,
+          "end": 9.64
+        }
+      ]
+    },
+    {
+      "id": "04",
+      "path": "assets/voice/04.wav",
+      "duration_s": 6.891,
+      "words": [
+        {
+          "id": "w0",
+          "text": "It",
+          "start": 0.04,
+          "end": 0.1
+        },
+        {
+          "id": "w1",
+          "text": "listens",
+          "start": 0.16,
+          "end": 0.73
+        },
+        {
+          "id": "w2",
+          "text": "to",
+          "start": 0.73,
+          "end": 0.89
+        },
+        {
+          "id": "w3",
+          "text": "how",
+          "start": 0.89,
+          "end": 1.13
+        },
+        {
+          "id": "w4",
+          "text": "loud",
+          "start": 1.13,
+          "end": 1.46
+        },
+        {
+          "id": "w5",
+          "text": "the",
+          "start": 1.46,
+          "end": 1.7
+        },
+        {
+          "id": "w6",
+          "text": "room",
+          "start": 1.7,
+          "end": 1.96
+        },
+        {
+          "id": "w7",
+          "text": "is,",
+          "start": 2.02,
+          "end": 2.41
+        },
+        {
+          "id": "w8",
+          "text": "not",
+          "start": 2.41,
+          "end": 2.67
+        },
+        {
+          "id": "w9",
+          "text": "what",
+          "start": 2.67,
+          "end": 3.01
+        },
+        {
+          "id": "w10",
+          "text": "anyone",
+          "start": 3.02,
+          "end": 3.47
+        },
+        {
+          "id": "w11",
+          "text": "says.",
+          "start": 3.47,
+          "end": 3.96
+        },
+        {
+          "id": "w12",
+          "text": "Nothing",
+          "start": 3.96,
+          "end": 4.48
+        },
+        {
+          "id": "w13",
+          "text": "is",
+          "start": 4.48,
+          "end": 4.65
+        },
+        {
+          "id": "w14",
+          "text": "recorded,",
+          "start": 4.65,
+          "end": 5.48
+        },
+        {
+          "id": "w15",
+          "text": "nothing",
+          "start": 5.48,
+          "end": 5.85
+        },
+        {
+          "id": "w16",
+          "text": "leaves",
+          "start": 5.94,
+          "end": 6.27
+        },
+        {
+          "id": "w17",
+          "text": "your",
+          "start": 6.27,
+          "end": 6.51
+        },
+        {
+          "id": "w18",
+          "text": "wrist.",
+          "start": 6.51,
+          "end": 7.02
+        }
+      ]
+    },
+    {
+      "id": "05",
+      "path": "assets/voice/05.wav",
+      "duration_s": 3.029,
+      "words": [
+        {
+          "id": "w0",
+          "text": "Pick",
+          "start": 0.04,
+          "end": 0.27
+        },
+        {
+          "id": "w1",
+          "text": "the",
+          "start": 0.28,
+          "end": 0.49
+        },
+        {
+          "id": "w2",
+          "text": "room,",
+          "start": 0.49,
+          "end": 0.91
+        },
+        {
+          "id": "w3",
+          "text": "listen,",
+          "start": 1.08,
+          "end": 1.48
+        },
+        {
+          "id": "w4",
+          "text": "balanced",
+          "start": 1.48,
+          "end": 2.05
+        },
+        {
+          "id": "w5",
+          "text": "or",
+          "start": 2.05,
+          "end": 2.19
+        },
+        {
+          "id": "w6",
+          "text": "presenting.",
+          "start": 2.19,
+          "end": 2.94
+        }
+      ]
+    },
+    {
+      "id": "06",
+      "path": "assets/voice/06.wav",
+      "duration_s": 4.907,
+      "words": [
+        {
+          "id": "w0",
+          "text": "Afterwards,",
+          "start": 0.11,
+          "end": 0.77
+        },
+        {
+          "id": "w1",
+          "text": "a",
+          "start": 0.85,
+          "end": 0.87
+        },
+        {
+          "id": "w2",
+          "text": "listening",
+          "start": 0.87,
+          "end": 1.48
+        },
+        {
+          "id": "w3",
+          "text": "score",
+          "start": 1.48,
+          "end": 1.83
+        },
+        {
+          "id": "w4",
+          "text": "like",
+          "start": 1.83,
+          "end": 2.06
+        },
+        {
+          "id": "w5",
+          "text": "a",
+          "start": 2.12,
+          "end": 2.18
+        },
+        {
+          "id": "w6",
+          "text": "sleep",
+          "start": 2.18,
+          "end": 2.49
+        },
+        {
+          "id": "w7",
+          "text": "score,",
+          "start": 2.54,
+          "end": 3.36
+        },
+        {
+          "id": "w8",
+          "text": "and",
+          "start": 3.41,
+          "end": 3.49
+        },
+        {
+          "id": "w9",
+          "text": "whether",
+          "start": 3.49,
+          "end": 3.8
+        },
+        {
+          "id": "w10",
+          "text": "you",
+          "start": 3.8,
+          "end": 3.92
+        },
+        {
+          "id": "w11",
+          "text": "course-corrected.",
+          "start": 3.99,
+          "end": 4.78
+        }
+      ]
+    },
+    {
+      "id": "07",
+      "path": "assets/voice/07.wav",
+      "duration_s": 3.84,
+      "words": [
+        {
+          "id": "w0",
+          "text": "two",
+          "start": 0.03,
+          "end": 0.23
+        },
+        {
+          "id": "w1",
+          "text": "ears,",
+          "start": 0.3,
+          "end": 0.7
+        },
+        {
+          "id": "w2",
+          "text": "two",
+          "start": 0.79,
+          "end": 0.96
+        },
+        {
+          "id": "w3",
+          "text": "ears,",
+          "start": 0.96,
+          "end": 1.44
+        },
+        {
+          "id": "w4",
+          "text": "one",
+          "start": 1.44,
+          "end": 1.68
+        },
+        {
+          "id": "w5",
+          "text": "mouth.",
+          "start": 1.68,
+          "end": 2.36
+        },
+        {
+          "id": "w6",
+          "text": "Use",
+          "start": 2.39,
+          "end": 2.58
+        },
+        {
+          "id": "w7",
+          "text": "them",
+          "start": 2.58,
+          "end": 2.88
+        },
+        {
+          "id": "w8",
+          "text": "in",
+          "start": 2.88,
+          "end": 3.03
+        },
+        {
+          "id": "w9",
+          "text": "that",
+          "start": 3.03,
+          "end": 3.33
+        },
+        {
+          "id": "w10",
+          "text": "ratio.",
+          "start": 3.33,
+          "end": 3.96
+        }
+      ]
+    }
+  ],
+  "sfx": [],
+  "total_duration_s": 39.339
+}

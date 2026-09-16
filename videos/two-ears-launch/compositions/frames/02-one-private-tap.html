@@ -1,0 +1,290 @@
+<template>
+  <!--
+    02-one-private-tap — kinetic-type-beats (Hook triptych variant, adapted):
+    beat 1 wordmark → beat 2 the tap pulse (non-text) → beat 3 closing line, which holds.
+    Typography note for the orchestrator: no font files are staged in this project
+    (no assets/fonts, no capture/assets/fonts, zero .woff2 on disk), so per the role no
+    named family is declared; frame.md weights / tracking / colors are applied on a generic
+    sans stack. Swap in a shipped @font-face when fonts are staged.
+  -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    @font-face { font-family: "Space Grotesk"; font-weight: 500; src: url("assets/fonts/Space_Grotesk_500.woff2") format("woff2"); }
+    @font-face { font-family: "Space Grotesk"; font-weight: 600; src: url("assets/fonts/Space_Grotesk_600.woff2") format("woff2"); }
+    @font-face { font-family: "Space Grotesk"; font-weight: 700; src: url("assets/fonts/Space_Grotesk_700.woff2") format("woff2"); }
+    @font-face { font-family: "Inter"; font-weight: 400; src: url("assets/fonts/Inter_400.woff2") format("woff2"); }
+    #root {
+      position: relative;
+      width: 1080px;
+      height: 1080px;
+      overflow: hidden;
+      container-type: size;
+      font-family: "Space Grotesk", system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    #root .clip {
+      position: absolute;
+      inset: 0;
+    }
+    #root [data-part="bg"] {
+      background: #000000;
+    }
+    #root [data-part="stage"] {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    /* The watch group: 300 × 520, case centered in the box so the group scales about the face. */
+    #root [data-part="watch"] {
+      position: relative;
+      width: 300px;
+      height: 520px;
+    }
+    #root [data-part="glow"] {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 1000px;
+      height: 1000px;
+      margin: -500px 0 0 -500px;
+      border-radius: 50%;
+      background: radial-gradient(
+        circle,
+        #0f3385 0%,
+        rgba(15, 51, 133, 0.6) 28%,
+        rgba(15, 51, 133, 0) 66%
+      );
+    }
+    #root [data-part="band-top"],
+    #root [data-part="band-bottom"] {
+      position: absolute;
+      left: 75px;
+      width: 150px;
+      height: 88px;
+      border: 1.5px solid rgba(100, 210, 255, 0.2);
+      background: rgba(255, 255, 255, 0.03);
+    }
+    #root [data-part="band-top"] {
+      top: 0;
+      border-radius: 30px 30px 8px 8px;
+    }
+    #root [data-part="band-bottom"] {
+      top: 432px;
+      border-radius: 8px 8px 30px 30px;
+    }
+    #root [data-part="case"] {
+      position: absolute;
+      left: 0;
+      top: 80px;
+      width: 300px;
+      height: 360px;
+      border-radius: 76px;
+      border: 2px solid rgba(100, 210, 255, 0.2);
+      background: #000000;
+    }
+    #root [data-part="face"] {
+      position: absolute;
+      inset: 14px;
+      border-radius: 62px;
+      background: #000000;
+      overflow: hidden;
+    }
+    #root [data-part="face-lit"] {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        circle at 50% 42%,
+        rgba(100, 210, 255, 0.15) 0%,
+        rgba(100, 210, 255, 0.08) 45%,
+        rgba(100, 210, 255, 0.02) 100%
+      );
+    }
+    #root [data-part="crown"] {
+      position: absolute;
+      right: -9px;
+      top: 238px;
+      width: 10px;
+      height: 44px;
+      border-radius: 5px;
+      border: 1.5px solid rgba(100, 210, 255, 0.2);
+      background: rgba(100, 210, 255, 0.15);
+    }
+    #root [data-part="icon"] {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 92px;
+      height: 92px;
+      margin: -90px 0 0 -46px;
+      border-radius: 24px;
+      object-fit: cover;
+      display: block;
+    }
+    /* Ring: a thin primary stroke, scaled outward once by GSAP. */
+    #root [data-part="ring"] {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 120px;
+      height: 120px;
+      margin: -60px 0 0 -60px;
+      border-radius: 50%;
+      border: 1.5px solid #64d2ff;
+    }
+    /* Wordmark: hero at h1 scale, later scaled down by GSAP into the face lockup. */
+    #root [data-part="wm"] {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 112px;
+      margin-top: -56px;
+      line-height: 112px;
+      text-align: center;
+      white-space: nowrap;
+      font-size: 112px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #64d2ff;
+    }
+    #root [data-part="wm"] span,
+    #root [data-part="line"] span {
+      display: inline-block;
+    }
+    /* Closing line: h2, text white, beneath the lifted watch. */
+    #root [data-part="line"] {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 612px;
+      text-align: center;
+      white-space: nowrap;
+      font-size: 58px;
+      line-height: 1.1;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+    }
+    #root [data-part="line"] span {
+      margin-right: 0.24em;
+    }
+    #root [data-part="line"] span:last-child {
+      margin-right: 0;
+    }
+  </style>
+
+  <div
+    id="root"
+    data-composition-id="02-one-private-tap"
+    data-width="1080"
+    data-height="1080"
+    data-duration="6.516"
+  >
+    <div class="clip" data-part="bg" data-start="0" data-duration="6.516" data-track-index="0"></div>
+
+    <div class="clip" data-part="stage" data-start="0" data-duration="6.516" data-track-index="1">
+      <div data-part="watch">
+        <div data-part="glow"></div>
+        <div data-part="band-top"></div>
+        <div data-part="band-bottom"></div>
+        <div data-part="case">
+          <div data-part="face">
+            <div data-part="face-lit"></div>
+          </div>
+        </div>
+        <div data-part="crown"></div>
+        <img data-part="icon" src="assets/app-icon.png" alt="" />
+        <div data-part="ring"></div>
+        <div data-part="wm"><span>two</span><span>.</span><span>ears</span></div>
+      </div>
+    </div>
+
+    <div class="clip" data-part="line-layer" data-start="0" data-duration="6.516" data-track-index="2">
+      <div data-part="line">
+        <span>Nobody</span><span>else</span><span>feels</span><span>it.</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var ID = "02-one-private-tap";
+      var root = document.querySelector('[data-composition-id="' + ID + '"]');
+      var q = function (part) {
+        return root.querySelector('[data-part="' + part + '"]');
+      };
+      var qa = function (sel) {
+        return Array.prototype.slice.call(root.querySelectorAll(sel));
+      };
+
+      // dynamic-content-sequencing: per-token start times are computed ONCE at build from
+      // token length (BASE + chars × SEC_PER_CHAR), never hand-typed and never in onUpdate.
+      var BASE = 0.08;
+      var SEC_PER_CHAR = 0.03;
+      var ENTER = 0.5;
+      function sequence(tokens, start) {
+        var t = start;
+        return tokens.map(function (el) {
+          var s = t;
+          t += BASE + el.textContent.length * SEC_PER_CHAR;
+          return s;
+        });
+      }
+
+      var watch = q("watch");
+      var glow = q("glow");
+      var parts = [q("band-top"), q("band-bottom"), q("case"), q("crown"), q("icon")];
+      var faceLit = q("face-lit");
+      var ring = q("ring");
+      var wm = q("wm");
+      var wmTokens = qa('[data-part="wm"] span');
+      var lineTokens = qa('[data-part="line"] span');
+
+      var tl = gsap.timeline({ paused: true });
+
+      // ── Scene 1 (0.0–1.4s): the wordmark arrives per-token, then scales down into the face lockup.
+      var wmStarts = sequence(wmTokens, 0.06);
+      wmTokens.forEach(function (el, i) {
+        tl.fromTo(
+          el,
+          { opacity: 0, y: 26 },
+          { opacity: 1, y: 0, duration: ENTER, ease: "power3.out" },
+          wmStarts[i]
+        );
+      });
+      // Plain scale tween, no camera, no overshoot: the hero clears the center by becoming the small lockup.
+      tl.to(wm, { scale: 0.26, y: 64, duration: 0.55, ease: "power2.inOut" }, 1.0);
+
+      // ── Scene 2 (1.4–4.6s): watch fades in at center; glow rises behind it; ONE ring pulse; face brightens then settles.
+      tl.fromTo(glow, { opacity: 0 }, { opacity: 0.28, duration: 0.9, ease: "power2.out" }, 1.45);
+      tl.fromTo(parts, { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power2.out" }, 1.45);
+
+      // "taps your wrist" — a single thin ring expands outward from the watch's center and fades.
+      tl.fromTo(
+        ring,
+        { scale: 0.6, opacity: 0.55 },
+        { scale: 4.2, opacity: 0, duration: 1.2, ease: "power2.out" },
+        2.05
+      );
+      tl.fromTo(faceLit, { opacity: 0 }, { opacity: 1, duration: 0.18, ease: "power2.out" }, 2.05);
+      tl.to(faceLit, { opacity: 0.22, duration: 0.8, ease: "power2.inOut" }, 2.3);
+
+      // ── Scene 3 (4.6s–end): the watch shrinks and slides up to the upper third; the closing line arrives beneath.
+      tl.to(watch, { scale: 0.55, y: -240, duration: 0.75, ease: "power2.inOut" }, 4.55);
+
+      var lineStarts = sequence(lineTokens, 4.75);
+      lineTokens.forEach(function (el, i) {
+        tl.fromTo(
+          el,
+          { opacity: 0, y: 22 },
+          { opacity: 1, y: 0, duration: ENTER, ease: "power3.out" },
+          lineStarts[i]
+        );
+      });
+      // Holds still to the end; the root transition owns the exit.
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[ID] = tl;
+    })();
+  </script>
+</template>

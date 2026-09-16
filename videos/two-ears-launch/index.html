@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1080, height=1080">
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js" integrity="sha384-sG0Hv1tP1lZCk9KQmrIbY/XNwi+OY84GQqhMscbnsoBFqAz8KNCil1kvfL3Hbbk2" crossorigin="anonymous"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1080px;
+        height: 1080px;
+        overflow: hidden;
+        background: #000;
+      }
+      #root {
+        position: relative;
+        width: 1080px;
+        height: 1080px;
+        overflow: hidden;
+        background: #000000;
+      }
+      .scene {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-hshk" id="root" data-composition-id="main" data-start="0" data-duration="39.339" data-width="1080" data-height="1080">
+      <div data-hf-id="hf-7nef" id="el-01-some-rooms" class="scene" data-composition-id="01-some-rooms" data-composition-src="compositions/frames/01-some-rooms.html" data-start="0" data-duration="5.413" data-track-index="0"></div>
+      <audio data-hf-id="hf-cahy" id="el-01-some-rooms-voice" src="assets/voice/01.wav" data-start="0" data-duration="5.013" data-track-index="10" data-volume="1"></audio>
+
+      <div data-hf-id="hf-oumq" id="el-02-one-private-tap" class="scene" data-composition-id="02-one-private-tap" data-composition-src="compositions/frames/02-one-private-tap.html" data-start="5.013" data-duration="6.516" data-track-index="1"></div>
+      <audio data-hf-id="hf-fwjq" id="el-02-one-private-tap-voice" src="assets/voice/02.wav" data-start="5.013" data-duration="6.016" data-track-index="10" data-volume="1"></audio>
+
+      <div data-hf-id="hf-alor" id="el-03-the-ring" class="scene" data-composition-id="03-the-ring" data-composition-src="compositions/frames/03-the-ring.html" data-start="11.029" data-duration="10.143" data-track-index="0"></div>
+      <audio data-hf-id="hf-hvhh" id="el-03-the-ring-voice" src="assets/voice/03.wav" data-start="11.029" data-duration="9.643" data-track-index="10" data-volume="1"></audio>
+
+      <div data-hf-id="hf-nvch" id="el-04-not-words" class="scene" data-composition-id="04-not-words" data-composition-src="compositions/frames/04-not-words.html" data-start="20.672" data-duration="7.391" data-track-index="1"></div>
+      <audio data-hf-id="hf-pq76" id="el-04-not-words-voice" src="assets/voice/04.wav" data-start="20.672" data-duration="6.891" data-track-index="10" data-volume="1"></audio>
+
+      <div data-hf-id="hf-pdo8" id="el-05-pick-the-room" class="scene" data-composition-id="05-pick-the-room" data-composition-src="compositions/frames/05-pick-the-room.html" data-start="27.563000000000002" data-duration="3.529" data-track-index="0"></div>
+      <audio data-hf-id="hf-ie9u" id="el-05-pick-the-room-voice" src="assets/voice/05.wav" data-start="27.563000000000002" data-duration="3.029" data-track-index="10" data-volume="1"></audio>
+
+      <div data-hf-id="hf-m8op" id="el-06-listening-score" class="scene" data-composition-id="06-listening-score" data-composition-src="compositions/frames/06-listening-score.html" data-start="30.592000000000002" data-duration="5.307" data-track-index="1"></div>
+      <audio data-hf-id="hf-yhsd" id="el-06-listening-score-voice" src="assets/voice/06.wav" data-start="30.592000000000002" data-duration="4.907" data-track-index="10" data-volume="1"></audio>
+
+      <div data-hf-id="hf-ap16" id="el-07-two-ears" class="scene" data-composition-id="07-two-ears" data-composition-src="compositions/frames/07-two-ears.html" data-start="35.499" data-duration="3.84" data-track-index="0"></div>
+      <audio data-hf-id="hf-ne3b" id="el-07-two-ears-voice" src="assets/voice/07.wav" data-start="35.499" data-duration="3.84" data-track-index="10" data-volume="1"></audio>
+
+      <!-- captions -->
+      <div data-hf-id="hf-wocc" id="el-captions" class="scene" data-composition-id="captions" data-composition-src="compositions/captions.html" data-start="0" data-duration="39.339" data-track-index="2"></div>
+
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = gsap.timeline({ paused: true });
+      // ── frame transitions (injected by transitions.mjs) ──
+      (function () { var tl = window.__timelines["main"];
+        tl.to("#el-01-some-rooms", { scale: 2.5, opacity: 0, filter: "blur(8px)", duration: 0.4, ease: "power3.in" }, 5.013);
+        tl.fromTo("#el-02-one-private-tap", { scale: 0.5, opacity: 0, filter: "blur(8px)" }, { scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.4, ease: "power3.out" }, 5.013);
+        tl.to("#el-02-one-private-tap", { opacity: 0, duration: 0.5, ease: "power2.inOut" }, 11.029);
+        tl.fromTo("#el-03-the-ring", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.inOut" }, 11.029);
+        tl.to("#el-03-the-ring", { opacity: 0, duration: 0.5, ease: "power2.inOut" }, 20.672);
+        tl.fromTo("#el-04-not-words", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.inOut" }, 20.672);
+        tl.to("#el-04-not-words", { x: -1080, duration: 0.5, ease: "power3.inOut" }, 27.563);
+        tl.fromTo("#el-05-pick-the-room", { x: 1080, opacity: 1 }, { x: 0, duration: 0.5, ease: "power3.inOut" }, 27.563);
+        tl.to("#el-05-pick-the-room", { opacity: 0, duration: 0.5, ease: "power2.inOut" }, 30.592);
+        tl.fromTo("#el-06-listening-score", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.inOut" }, 30.592);
+        tl.to("#el-06-listening-score", { scale: 2.5, opacity: 0, filter: "blur(8px)", duration: 0.4, ease: "power3.in" }, 35.499);
+        tl.fromTo("#el-07-two-ears", { scale: 0.5, opacity: 0, filter: "blur(8px)" }, { scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.4, ease: "power3.out" }, 35.499);
+        tl.to({}, { duration: 39.339 }, 0); // full-span anchor — main.duration() == composition total (Studio master duration)
+      })();
+    </script>
+  </body>
+</html>
