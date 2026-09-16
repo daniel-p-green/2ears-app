@@ -90,6 +90,7 @@ final class SessionAggregatorTests: XCTestCase {
         a.recordNudge(at: 10, share: .value(0.60))
         a.recordNudge(at: 40, share: .value(0.70))
         a.finish(elapsed: 100, share: .value(0.30))
+        XCTAssertEqual(a.nudgesJudged, 2)
         XCTAssertEqual(a.nudgesFollowed, 2, "due at 130 and 160, both within 60 s of the end")
     }
 
@@ -98,6 +99,15 @@ final class SessionAggregatorTests: XCTestCase {
         a.recordNudge(at: 95, share: .value(0.60))
         a.finish(elapsed: 100, share: .value(0.30))
         XCTAssertEqual(a.nudgeCount, 1)
-        XCTAssertEqual(a.nudgesFollowed, 0, "5 s is not enough evidence of course-correction")
+        XCTAssertEqual(a.nudgesJudged, 0, "5 s is not enough evidence of course-correction")
+        XCTAssertEqual(a.nudgesFollowed, 0)
+    }
+
+    func testJudgedCountsUnfollowedNudges() {
+        var a = SessionAggregator()
+        a.recordNudge(at: 10, share: .value(0.60))
+        a.tick(elapsed: 131, share: .value(0.58))
+        XCTAssertEqual(a.nudgesJudged, 1)
+        XCTAssertEqual(a.nudgesFollowed, 0)
     }
 }

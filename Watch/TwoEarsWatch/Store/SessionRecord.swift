@@ -12,6 +12,7 @@ final class SessionRecord {
     var uncertainFraction: Double
     var longestUserStretch: TimeInterval
     var nudgeCount: Int
+    var nudgesJudged: Int = 0
     var nudgesFollowed: Int
     /// One entry per minute; a negative value means the estimator was uncertain that minute.
     var perMinuteShareStorage: [Double]
@@ -26,6 +27,7 @@ final class SessionRecord {
         uncertainFraction = summary.uncertainFraction
         longestUserStretch = summary.longestUserStretch
         nudgeCount = summary.nudgeCount
+        nudgesJudged = summary.nudgesJudged
         nudgesFollowed = summary.nudgesFollowed
         perMinuteShareStorage = summary.perMinuteShare.map { $0 ?? -1 }
         endReasonRawValue = summary.endReason.rawValue
@@ -43,6 +45,7 @@ final class SessionRecord {
             uncertainFraction: uncertainFraction,
             longestUserStretch: longestUserStretch,
             nudgeCount: nudgeCount,
+            nudgesJudged: nudgesJudged,
             nudgesFollowed: nudgesFollowed,
             perMinuteShare: perMinuteShareStorage.map { $0 < 0 ? nil : $0 },
             endReason: SessionEndReason(rawValue: endReasonRawValue) ?? .manual)

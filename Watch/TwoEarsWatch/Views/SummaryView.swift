@@ -16,7 +16,7 @@ struct SummaryView: View {
                     .padding(.vertical, 6)
             }
 
-            if summary.perMinuteShare.contains(where: { $0 != nil }) {
+            if summary.perMinuteShare.compactMap({ $0 }).count >= 2 {
                 Section("Over Time") {
                     sparkline
                         .frame(height: 56)
@@ -27,8 +27,10 @@ struct SummaryView: View {
             Section {
                 LabeledContent("Longest stretch", value: durationText(summary.longestUserStretch))
                 LabeledContent("Nudges", value: summary.nudgeCount.formatted())
-                if summary.nudgeCount > 0 {
-                    LabeledContent("Course-corrected", value: "\(summary.nudgesFollowed) of \(summary.nudgeCount)")
+                if summary.nudgesJudged > 0 {
+                    LabeledContent("Followed", value: "\(summary.nudgesFollowed) of \(summary.nudgesJudged)")
+                } else if summary.nudgeCount > 0 {
+                    LabeledContent("Followed", value: "Too soon to tell")
                 }
                 LabeledContent("Uncertain", value: summary.uncertainFraction.formatted(.percent.precision(.fractionLength(0))))
                 LabeledContent("Length", value: durationText(summary.duration))

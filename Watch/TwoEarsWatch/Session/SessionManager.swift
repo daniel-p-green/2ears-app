@@ -164,6 +164,7 @@ final class SessionManager {
             uncertainFraction: aggregator.uncertainFraction,
             longestUserStretch: aggregator.longestUserStretchSeconds,
             nudgeCount: aggregator.nudgeCount,
+            nudgesJudged: aggregator.nudgesJudged,
             nudgesFollowed: aggregator.nudgesFollowed,
             perMinuteShare: aggregator.perMinuteShare,
             endReason: reason)

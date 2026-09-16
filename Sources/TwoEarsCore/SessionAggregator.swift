@@ -24,6 +24,8 @@ public struct SessionAggregator: Equatable, Sendable {
     /// nil where the estimator was uncertain at that point.
     public private(set) var perMinuteShare: [Double?] = []
     public private(set) var nudgeCount = 0
+    /// Nudges whose follow window played out far enough to be judged.
+    public private(set) var nudgesJudged = 0
     public private(set) var nudgesFollowed = 0
 
     private var currentStretchWindows = 0
@@ -99,6 +101,7 @@ public struct SessionAggregator: Equatable, Sendable {
         let due = pendingFollowChecks.filter { $0.due <= time }
         guard !due.isEmpty else { return }
         pendingFollowChecks.removeAll { $0.due <= time }
+        nudgesJudged += due.count
         guard let current = share.valueOrNil else { return }
         for check in due where current <= check.shareAtNudge - followedDrop {
             nudgesFollowed += 1

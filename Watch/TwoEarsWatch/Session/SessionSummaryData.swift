@@ -24,6 +24,8 @@ struct SessionSummaryData: Identifiable, Equatable, Sendable {
     var uncertainFraction: Double
     var longestUserStretch: TimeInterval
     var nudgeCount: Int
+    /// Nudges that had enough of their two-minute window to be judged.
+    var nudgesJudged: Int
     var nudgesFollowed: Int
     /// One entry per elapsed minute; nil where the estimator was uncertain.
     var perMinuteShare: [Double?]
